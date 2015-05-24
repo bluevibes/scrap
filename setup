@@ -1,0 +1,57 @@
+#!/bin/bash
+#Setup the expected environment on a new installation
+#RUN IT AS A SUPERUSER
+
+user=`logname`
+home=`grep $user /etc/passwd | awk -F: '{ print $6}'`
+
+#set logfile
+logfile=$home/zlog/setup.log
+test -d $home/zlog
+if [ $? -eq 1 ];then
+    mkdir $home/zlog
+fi
+
+run()
+{
+    echo -e "\n--------------------------------------------------------------------------------" &>> $logfile
+    echo "RUNNING : $*" &>> $logfile
+    $* &>> $logfile
+	if [ $? -ne 0 ];then
+        echo "FAILED : $*" &>> $logfile
+    else
+        echo "SUCCEEDED : $*" &>> $logfile
+    fi
+}
+
+#install neccessary packages  
+echo "Installing packages" | tee  $logfile  
+run "apt-get update -y"
+run "apt-get upgrade -fy"
+run "apt-get install chromium-browser -y"
+run "apt-get install -y vlc"
+run "apt-get install -y audacious"
+run "apt-get install -y gpart"
+#apt-get install -qy flashplugin-installer 
+
+#copy neccessary files
+echo "Copying files" | tee $logfile
+HOST=`hostname`
+run "cp -r /media/$HOST/HD710/An* $home/Desktop"
+run "cp -r /media/$HOST/HD710/Do* $home/Desktop"
+run "cp -r /media/$HOST/HD710/E-* $home/Desktop"
+run "cp -r /media/$HOST/HD710/So* $home/Desktop"
+run "cp -r /media/$HOST/HD710/Wa* $home/Desktop"
+run "cp -r /media/$HOST/HD710/Co* $home/Desktop"
+run "cp -r /media/$HOST/HD710/Fi* $home/Desktop"
+
+#personal configuration
+sudo -u $user << WALLYCRON
+crontab -l ; echo "* * * * * $home/shell/scripts/wally" | grep -v "no crontab" | sort | uniq | crontab -
+WALLYCRON
+
+:<<GETUSERLIKETHIS
+lim=$(grep "^UID_MIN" /etc/login.defs) #uid min limit
+user=`awk -F':' -v "limit=${lim##UID_MIN}" '{ if ( $3 >= limit ) print $1}' /etc/passwd | grep -v nobody | sed -n 1p` #works only for the first user in the general user list
+home=`grep $user /etc/passwd | awk -F: '{ print $6}'`
+GETUSERLIKETHIS

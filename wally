@@ -1,0 +1,44 @@
+#!/bin/bash
+#Randomly apply wallpaper from a directory
+
+user=`whoami`
+home=`grep $user /etc/passwd | awk -F: '{ print $6}'`
+
+#set wallpaper directory
+if [ $# -eq 1 ];then
+    wally=$1
+else
+    wally=$home/Desktop/Wallpapers/
+fi
+
+#set logfile
+logfile=$home/zlog/wally.log
+test -d $home/zlog
+if [ $? -eq 1 ];then
+    mkdir $home/zlog
+fi
+
+#check for emptiness
+total=`find $wally -name "*.jpeg" -o -name "*.png" -o -name "*.jpg" -type f | wc -l`
+#total=`ls $wally/* | grep -c [jJpP][nNpP][eE]*[gG]` 
+if [ $total -eq 0 ];then
+    if [ `tail -1 $logfile | grep -c "FAILED TO SET"` -ne 1 ];then #check if the last run was a failure
+        notify-send -i face-raspberry "WALLY" "$wally is empty"
+    fi
+    echo `date` ": FAILED TO SET : $wally is empty" >> $logfile
+else
+    path=`find $wally -name "*.jpeg" -o -name "*.png" -o -name "*.jpg" -type f | sort -R | sed -n 1p`
+    #path=`ls $wally/* | grep -c [jJpP][nNpP][eE]*[gG] | shuf -n1 | awk 'NR==1'`
+    #Following does not work due to:'dconf-WARNING **: failed to commit changes to dconf: Cannot autolaunch D-Bus without X11 $DISPLAY'
+    export DISPLAY=:0
+    gsettings set org.gnome.desktop.background picture-uri file://"$path"
+    gsettings set org.gnome.desktop.background picture-options "scaled"     
+    #Allowed values are "none","wallpaper","centered","scaled","stretched","zoom","spanned"
+    echo `date` ": SUCCESS : $path set" >> $logfile
+fi
+
+:<<NOTES
+Prior to Gnome3 gconftool was used in place of gsettings. This script works for Gnome3+ only
+Use dconf-editor to get a gui on the gnome configurations
+There is a project "gsettings-info" on github that gives information about the schema and key-values through cli as in dconf-editor
+NOTES

@@ -1,0 +1,10 @@
+a computer provides two fundamental operations:
+1. calculation
+2. storage
+
+Statements of facts give us true, but, as we'll see, they don't necessarily help us think about how to find new information.
+Imperative knowledge, how to methods or recipes, give us ways of finding new information.
+
+fixed program computer : performs only one type of calculation - calculator
+stored program computer : performs calculations based on a pinstructions listed in a sequence of program 
+

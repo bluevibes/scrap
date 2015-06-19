@@ -15,3 +15,5 @@ exhaustive enumeration : traversing all possible values one by one to reach to t
 bisection search : divide and conquer
 
 newton raphson root finding : uses derivatives to find root
+
+Turing complete : language/computational engine that can solve any type of computational problem. The runtime and size is not a limitation.

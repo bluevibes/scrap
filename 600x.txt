@@ -8,3 +8,10 @@ Imperative knowledge, how to methods or recipes, give us ways of finding new inf
 fixed program computer : performs only one type of calculation - calculator
 stored program computer : performs calculations based on a pinstructions listed in a sequence of program 
 
+heron of alexandria : square root of a number by guessing
+
+exhaustive enumeration : traversing all possible values one by one to reach to the answer.
+
+bisection search : divide and conquer
+
+newton raphson root finding : uses derivatives to find root

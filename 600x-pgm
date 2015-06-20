@@ -1,0 +1,36 @@
+#Find a substring's occurance in a string s
+
+count=0
+a=0
+while True:
+   a=s.find('bob')
+   if a < 0:
+       break
+   else:
+       count+=1
+       s=s[a+2:]
+       
+print count
+
+#Find longest substring in alphabetical order
+def findsslen(string):
+    index=0    
+    if len(string) == 1:
+        return 1
+    while index < len(string)-1:
+        if string[index] <= string[index+1]:
+            index+=1
+        else:
+            break
+    return index+1
+    
+start=0
+length=0
+index=0
+while index < len(s):
+    tmp=findsslen(s[index:])
+    if tmp > length:
+        length = tmp
+        start = index
+    index+=tmp
+print 'Longest substring in alphabetical order is: '+s[start:start+length]

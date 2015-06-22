@@ -1,0 +1,326 @@
+#GIT NOTES 
+#PRO GIT
+
+----------------
+||Introduction||
+
+Git is an open source, distributed version control system designed for speed and efficiency.
+Each revision is associated with a timestamp and the person making the change.
+Every command runs locally (hence fast) other than the synchronisation part that works with server.
+Git does not overwrite the history but it creates new on top of old and point to it. 
+
+There are 3 types version control systems:
+1) local version control system
+a local repository is created that holds the version history and the repository
+developers copy the files they need and work separately and save the changes into the local repository.
+disadvantage : no sharing among developers
+ex : revision control system(RCS)
+
+2) centralised version control system
+a central server saves versioned files (entire commit history and latest version of repository)
+each developer holds only one version and for each new commit requiring connection to server
+developers can retrieve only the last version from the server
+disadvantage : single point of failure at server
+ex : Subversion, Perforce
+
+3) distributed version control system 
+each developer has a clone/mirror of the entire repository along with the commit history
+commits are made locally and published to the server when connectivity is available hence no network latency overhead.
+disadvantage : local storage may grow huge for big projects or long commit history or both
+ex : git, bazaar, mercurial
+
+Git's Aspects : 
+Facilitate distributed and branched development
+Scale to handle thousands of developers
+Immutability of data objects in database
+Atomic transactions
+
+----------------------------------
+||Difference||
+
+Most VCS are file based delta storages, so each version of the repo would be the files and the set of changes applied to them. Some version would be the file and delta will be the changes applied to it which could be positive or negative. So to get to a particular point, the entire history needs to be traversed and some amount of calculation needs to be done. 
+The changes are name dependent so if the file name changes even that is stored.
+Git thinks of the data as a stream of snapshots at a point in time, so the files that have been changed would have new references to them while the unchanged files would be pointed to using its previous reference so as to be efficient. The files are stored as a manifest.
+Git stores the entire file rather than the differences in the version (odd to do this but it allows git to perform certain actions easily.)
+
+---------------------------
+||Git file classification||
+
+Three main sections of project under git :
+1) Git directory (.git)
+Stores the metadata and object database of the project
+Cloning copies this part - aka repository
+
+2) Working Directory
+This is checkout of one version of the project
+Decompressed from the repository and placed on disk for modification
+Only one working directory is used for all the branches (not separate), so one can fast context switch between them.
+
+3) Staging area
+It is the index data structure
+Stores information about what should go into the next commit
+
+Git classifies the files under main directory into three categories :
+1) tracked
+any file that has been staged and susequently committed atleast once.
+A tracked file can be in following states : 
+        a) committed : safely stored in the local database
+        b) modified : changes have been made to committed files
+        c) staged : modified files have been marked for the next commit
+
+2) ignored
+files that are supposed to be ignored by git
+these files are explicitly mentioned in .gitignore placed inside directory structure or .git/info/exclude
+
+3)untracked
+all the files other than tracked and ignored in the repository are untracked
+
+Git also does a filename expansion along with the shell's expansion. So use \ to escape * etc.
+
+---------------------
+||Git configurations||
+
+Configurations are customizations for the git environment defined by a user. 
+Certain configurations are mandatory for commiting changes - namely username and email so that git can associate them with the commits.
+3 configuration files used by git that are in .ini format in "increasing level of precedence" are :
+1> /etc/gitconfig -> r/w when --system given as option - for system wide use
+2> ~/.gitconfig or ~/.config/git/config -> r/w this when --global given as option - for a specific user's repos
+3> .git/config under main directory -> r/w this when given --local - for repository specific configuration
+We may specify a particular configuration file by giving --file as option. 
+Defaults configs (w/o --opt) made are repository specific.
+If environment variables are set, they override all other configurations. GIT_EDITOR, GIT_AUTHOR_NAME, GIT_AUTHOR_EMAIL etc are environment variables in git. 
+
+-------------------
+||Git's data structures||
+
+Git repository is basically a database with its own way of representing data that contains all the info regarding revisions of a project.
+The database that git uses is proprietry however easy to inspect. Git maintains two primary data structures, the object store and the index in a hidden subdirectory named .git.
+
+[A] Objects : 
+1) Blob
+binary large object that holds a version of a file. On a commit, each file is stored as a blob. 
+these are variables or files that can contain any data and whose internal structure is ignored.
+
+2) Trees
+A tree object is created from one level of directory listing and a heirarchy of such objects forms a tree.
+Information regarding blob identifiers for each file, path names and a bit of metadata for all the files in one directory.
+Trees from different commits point to same blob of a file if it does not change.
+
+3) Commits
+Represent a snapshot of the repository that holds metadata (commit msg, committer etc) for each change introduced into the repository at that point.
+Each commit points to immediate previous commit object. This way all the commits form a tree with root as the initial commit.
+Anything ever committed, can be recovered as the objects are immutable. Your just need to have a pointer to that data.
+
+4) Tag
+assigns a human readable name to other objects (usually commit)
+two types : annotated (stored as full objects, are checksummed, contains the tagger's name, e-mail and date, have a tagging message, and can be signed) and lightweight (pointer to a specific 
+commit)
+git push doesn't transfer tags to remote repo. It needs to be specified.
+
+[B] Index :
+index is a temporary and dynamic binary file that describes the entire repository and populates the working directory from it.
+the index records and retains changes by user until they are committed.
+this is where staging is done and git status queries the state of the index.
+
+---------------------
+||Internal Working ||
+
+Object ID:
+It is impossible to change a file without git knowing about it. 
+Object store is organized and implemented as a content-addressable storage.
+Object ID is produced by applying SHA1 to the contents of the object (it depends on the time of the commit as well), yielding a 160 bit/40 character long hash value (checksum). 
+The SHA hash is independent of the file name. So a key value pair is maintained with key as SHA-1 hash and value as the content.
+Hash functions are related to checksums as these concepts overlap to some extent. A good checksum algorithm will output a different value changes made to the input. Checksum verify integrity of the data. A hash value is mathematical mapping and much wider scope.
+
+File renaming : 
+Git does not store explicit rename information and figures out implicitly that the file has been renamed.
+Git compares a commit and it parent and figures out which files are there in parent and not in current that are content similar (similarity checks for 50% similarity by default (configurable)).
+A copy of the file has the same hash and hence pointer being used in multiple tree branches.
+
+Pack Files :
+Git stores the objects in the database in a compressed format as a pack file representation that is different from that of other VCS.
+So when commits are made, entire file will be stored as a part of the snapshot. But when the file is pushed over the network, it is delta compressed. A delta compression is usually done among files that are content similar, for example among renamed files, relocated files, partly changed files or even with any other file as long as the contents of the two files are similar and yield a better compression.
+This delta compression occurs only when the files are pushed over network (it is visible as messages are printeds).  
+Compressions can be made better if time taken for compression/decompression can be allowed to increase. Better compression implies smaller pack files however it takes longer time for processing it.
+
+                                     _____
+                                    /tags/
+                                    -----
+                                      |
+                                      V
+                    ___              ___
+                  -     -          -     -           _______         _____
+                ( commit1 )<---- ( commit2 ) <----- /BRANCH/ <----- /HEAD/
+                  - ___ -          - ___ -          -------         -----
+                                      |     
+                                      |
+                                      |               
+                                      V       
+                                     /\
+                                    /  \
+                                   /tree\
+                                  --------
+                                     /\
+                                    /  \
+                                   V    V
+                              ________ ________
+                              |      | |      |
+                              |blob 1| |blob 2|
+                              |      | |      |
+                              -------- --------
+
+Git commands traverse back to the initial commit from the current commit to process commit on the way for the specified BRANCH.
+Since a tree is generated, we can do tree operations using this.
+
+---------------------
+||References in git||
+
+References: 
+1. branch reference : points to the hash of latest commit for the branch
+2. symbolic references
+3. remote references : branches that point to the hash of latest commit for that remote branch
+
+Few symbolic references that git provides :
+HEAD       : that refers to the commit that current branch points to.
+FETCH_HEAD : records the branch which you fetched from a remote repository with your last git fetch invocation.
+ORIG_HEAD  : stores the SHA of the commit that HEAD was storing prior to a drastic/dangerous move. Also reflogs differ from this as it records all HEAD movements.
+MERGE_HEAD : records the commit(s) which you are merging into your branch when you run git merge.
+CHERRY_PICK_HEAD : records the commit which you are cherry-picking when you run git cherry-pick.
+refer for more details - git help revisions 
+
+Ancestry specification : 
+Prior values of any BRANCH can be referenced as :
+1) BRANCH^n : which gives the nth parent of the reference branch. n cant be greater than two. BRANCH^^^ = BRANCH~3.
+2) BRANCH~n or BRANCH@{n} where n represents the nth previous value/commit of the pointer
+Combination of two : HEAD~3^2 --> 2nd parent of the 3rd prev pointer of HEAD
+
+Reflogs : 
+Every time the branch tip is updated a log is recorded for the action that caused it.
+Reflog information is temporary and local. However, it is very useful to know how certain commands were used in a repository.
+
+-------------------
+||Branches in git||
+
+Git branching is really a manipulation of pointers. master is the default branch created when a repo created using init.
+Checking out a branch adds its latest snapshot's content to the staging area and which then populates the working directory.
+Git has a pointer HEAD that points to the current local branch. Different branches stay isolated.
+
+Merging :
+If BRANCH is merged into master/or any other branch, two cases arise :
+1. BRANCH is direct upstream of the merge history.There is no divergence to be merged. So master now points to the latest commit pointed to by BRANCH. This is called fast-forward merge.
+2. BRANCH's commit is not direct successor of the master's commit. The development history is different. A three way merge is made by using the pointers of two branches to their latest commits and their common ancestor (first common best merge base) by traversing in reverse direction. Git does the merge on its own, using recursive strategy. A new commit is created in this case (pointed to by the master) that has merged the files from the two branches. Git takes the branch that is more similar to the common merge base and creates a new tree pointing to it and the other branch, with the contents of current branch it adds the files from the other branch that are not already in this branch and creates a new commit for this tree.
+
+Merges may result in conflict if the same hunk of the same file in two branches are changed. Git status shows the files that are unmerged. These files contain standard resolution markers/conflict. 
+Git also maintain three files/stages of the file in conflict. ":1:<file>", ":2:<file>" and ":3:<file>" are respectively common, ours and theirs versions of file.
+
+Resolution markers are of form : 
+        <<<<<<< HEAD:<file>     #This marks the beginning of the conflict found
+        .                       #This part comes from the branch pointed by HEAD
+        =======                 #Above and below are two versions of the same file from different branches
+        *                       #This part comes from BRANCH
+        >>>>>>> BRANCH:<file>   #This marks the end of conflict
+
+The merging should be so that either of the two parts or a manual mix of the two should be made. The resolution markers should be removed and once all the conflicts have been resolved, the files should staged and committed to complete the merge.
+Merges can be made be using graphical tools by running <git mergetool> and selecting the appropriate tool.
+
+Rebasing :
+git rebase branch1 branch2
+It works by going to the common ancestor of the two branches, getting the diff introduced by each commit of the branch2, saving those diffs to temporary files, resetting the branch2 to point to the commit pointed to by branch1 and applying the diffs of each commit from temporary file on top of branch2. branch1 is never moved. if branch2 is not specified, current branch is taken.
+
+Difference from merge : For two diverged branches, in merge the other branch's changes are applied on top of the current/specified branch. Eg: git merge origin/master will take the additional commits from origin/master and apply them to master and create a merge commit. However, in rebasing the rebase method is followed and the history will have the other branch's commit first and then current branches commit are applied on top of it. The order of commits is reversed as compared to merge.
+
+Rebasing replays changes from one line of work onto another in the order they were introduced, whereas merging takes the endpoints and merges them together. No difference in the end product after the integration occurs in either of two methods.
+Two differences otherwise :
+1) rebasing gives a more linear and cleaner history than merging. Rebasing tampers with the history.
+2) current branch in merge points to the merged commit while that in rebasing it is not updated to the rebased commit.
+Rule --> Do not rebase commits that exist outside your repository otherwise other repositories would have two histories : one of the auto merges from the pull and other of the rebase from your side. In such a case, others would need to rebase while pulling.
+
+-----------------------
+||Remote repositories||
+
+Git has a concept of upstream/remote branches : mapping of local branch to the ones on a remote. So when we clone, the remote branches (of the form REMOTE-ALIAS/BRANCH) are automatically created that are tracked by local branches (of the form BRANCH).
+Remote repositories are versions of your project that are hosted on the Internet or network somewhere with read-only/read-write access.
+Remote branches are bookmarks/references (pointers) to the state of branches in your remote repositories. They’re present locallly that you can’t move, they’re moved automatically for you whenever you do any network communication. origin is default remote alias.
+If a repository was cloned then it has a branches as origin/<branch> so that the namespace on the two different repositories dont collide. REMOTE-ALIAS is just an alias to the URL of remote location where the repository is hosted. The remote server's head is now your head but the locally server's head is now origin/<branch> and yours is at <branch>
+Repositories created using git init do not have a origin.
+If the current branch is set for tracking some remote branch, then the remote branch can be addressed using shorthand : @{u} or @{upstream}
+We can have any valid url (like a path of another repo on the same machine or on the network with proper protocol preceding it) as an upstream branch.
+
+Git pull works if the tracking branches are set otherwise errors appear as git does not know which branch to merge into after the pull.
+Git pull is a wrapper script that does a fetch of the remote branch the current branch is tracking from the server and tries to auto-merge if possible else puts the resolution markers where conflicts occur.
+In fetch command however, data is fetched and REMOTE-ALIAS/BRANCH is updated. The remote branch needs to be manually merged into tracking/local branch BRANCH.
+
+When pushing from BRANCH to REMOTE-ALIAS/BRANCH, two cases are possible :
+1) Git checks if remote branch is pointing to node, which is ancestor of node pointed by local current branch. Then rest of the differences are pushed to remote and by fast forwarding, merging is done on the remote machine. If a new branch is created locally and pushed, then there is no data to lose and the changes for new branches are pushed as it is.
+2) If the node at the remote is not the ancestor of the local branches current node then we need to fetch/pull the changes and merge so that the remote's node is the ancestor of the local branches current node. No pushes are allowed if the two branches have diverged.
+
+-------------------------
+||Rewriting the history||
+
+Git is a way of storing trees in a meta-posix database.
+We modify some of these trees selectively during reset.
+
+There are three trees (as in collection of files) in git : 
+1) HEAD : 
+Last commit's snapshot, parent of the next commit
+cat .git/HEAD (reference to the branch)
+cat .git/refs/heads/master (sha1 hash for the branch's tree)
+echo <sha1 hash> >>.git/refs/heads/<BRANCH> ---> would give us a a new BRANCH
+
+2) Index : 
+Proposed next commit which is actually a flat manifest with checksum rather than a tree.
+git commit only looks at the data in the index for the next commit. So even if the repo is deleted but data was staged, a commit is still possible.
+
+3) Working directory : 
+It acts like a sandbox
+Checking out a repo and checking into a repo to or from a working directory happens with the index in between the two structure.
+
+Using reset to move HEAD and the branch pointer point to the other commit : 
+1) Soft reset : Move the pointer to the commit to some other commit in the ancestry.
+2) Mixed reset : Move the HEAD to target/some commit then update the index with the contents of the new HEAD. This is opposite of git add.
+3) Hard reset : move the HEAD to target/some commit then update to index and make the working directory look like the index. Resetting hard will erase the working directory's contents.
+
+Use cases :
+One can thus squash multiple commits into single a commit.
+Selectively remove certain changes that are not desired.
+
+Fact : 
+Also the objects sqashed stay in the repository and can be branches can be reset to them if their commit hash is available with the user as git stores no reference directly to it. They still are intact and point back to their parent as before the reset however the branch at some commit in their ancestry continued using a new commit, hence history is rewritten and not erased. 
+
+Git checkout differs from reset in following terms :
+1) In checkout HEAD is updated to point to some other BRANCH. In reset, the BRANCH is updated and since it is the current branch HEAD moves implicitly with it.
+2) Checkout is not possible if the working directory is dirty (modified tracked files) which should to be either committed or stashed. However the index is allowed to have new staged files while checking out. 
+
+------------------
+||Ignoring files||
+
+Ignoring a file implies that the file wont show up in git status. Git wont call it untracked so it will be tracked for ignoring.
+Create a .gitignore in any subdirectory of the working directory. It can have a pattern/regex of file names that will get ignored. 
+File patterns listed in .gitignore will be applicable for the file in  subdirectories of the directory and the directory itself.
+A file that is tracked and added to .gitignore wont be ignored until it is removed as git rm --cached FILE.
+.gitignore is checked in the repo for it to be shared and by default it does not ignore itself
+If .gitignore is to be ignored, it can't be checked in.
+Create a global gitignore file (~/.gitignore or /etc/git/.gitignore) to ignore some files from all the repositories.
+To ignore some files that you do not want to share with other or add to gitignore, add it to .git/info/exclude.
+
+------------
+||Commands||
+
+Porcelain commands : user friendly high level commands that use other porcelain and plumbing commands internally.
+Plumbing commands : low level commands that were previously used as a part of UNIX or called from scripts and work directly on the repository.
+
+-----------------------
+||Storing credentials||
+
+Method 1 :
+for the remote reference, [remote "REF"] in .git/config, modify the url as https://USERNAME:PASSWORD@<rest of the url of the remote>.
+URL/percent encoding will be needed to escape characters. eg: instead of # use %23 where 23 is the ascii value in HEX format.
+
+Method 2 : 
+Cache mode --> for some interval store the credential in cache and not file system. Only current user has permissions to access cache through sockets.
+--timeout <seconds> tells when the cache expires, default : 15M.
+
+Method 3 : 
+Store mode --> store the credentials in plaintext format
+--file <path> tells to store the credentials at specified path, default : ~/.git-credentials.
+

@@ -1,0 +1,294 @@
+#GIT COMMANDS
+#PRO GIT
+
+------------------
+PORCELAIN COMMANDS
+------------------
+
+<git VERB --help>/<git help VERB>/<man git-VERB>
+for getting the manual page describing VERB (like config, log etc).
+
+<git clone [OPT] SOURCE DESINATION>
+clone a repo from SOURCE to the path specified by DESTINATION (default destination is current directory).
+OPT = -o REMOTEALIAS : use the REMOTEALIAS as remote name instead of origin
+
+<git init>
+Initialise a directory to be under git's version control. Used when creating a new repository.
+A .git directory which stores the metadata is created under the directory from which the command is run.
+In CVS or SVN however, a .svn directory is created for every directory under the main directory.
+
+<git config [--global/--local/--system] OPT>
+Get and set global/local/system options
+OPT = -l : List all the configurations. Keys may repeat as git reads from multiple configuration files but the last key value will be used.
+OPT = KEY VALUE : Set VALUE to the KEY in the respective configuration file. If no VALUE provided, lists the value for the KEY.
+OPT = --unset KEY : unset a specific KEY's entry using --unset option.
+OPT = alias.ALIAS-NAME 'SOME-HUGE-COMMAND' : create alias for SOME-HUGE-COMMAND and use ALIAS-NAME in place of that command. 
+OPT = core.excludesfile ~/.gitignore_global : create a gitignore file.
+
+<git add [OPT] FILE>
+Add untracked or modified files to the index/staging area
+OPT = -p : prompts hunk by hunk what to stage rather than the entire file at once
+OPT = -i : interactive staging mode
+
+<git rm [--cached] FILE> 
+w/o OPT : Remove a FILE from git repository and stage this change thereby only untracking (and not physically deleting) the file.
+OPT = --cached : it removes the file from staging area only keeping the working directly as it is and untracks the file.
+
+<git mv FILE>
+rename/move a file. 
+
+<git status OPT>
+check the status of the files (untracked/ tracked but modified/unmodified/staged) under the working tree/directory.
+OPT = -s : display a concise status messages.
+OPT = -b : display the branches involved
+?? : implies untracked files
+M  : implies modified and staged files
+A  : implies new files that were added to staging
+MM : implies modified and staged and again modified files
+
+<git commit [OPT] -m MESSAGE FILE1 FILE2 FILE3 >
+commit changes in FILE1 FILE2 FILE3 only with a MESSAGE as commit message
+git requires atleast usename and email should be set before a commit.
+OPT = -a : allows commiting without staging the changes in the already tracked but modified files. Does not include the untracked files.
+OPT = -v : adds the changes made to the commit message
+OPT = -S : sign a commit as configured
+OPT = --amend : previous commit files and current staging area are stored as a single commit. The old commit still exists but its hash is no longer referred to by any references.
+
+<git diff OPT [COMMITID1] [COMMITID2]>
+check the difference between different commits/staged/unstaged files.
+Without option check the difference between unstaged files and given COMMITID. If no COMMITID given, compare with the staged file. If nothing is staged compare with the last commit. If nothing is in unstaged, no result shown.
+OPT = --staged/--cached : to check the difference between commit with the given id and the staged files. If no COMMITID given, then compare with last commit.
+OPT = HEAD : to show the difference between last commit and (working directory + index)
+OPT = --color-words='[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+' : show only the words and space changes
+OPT = BRANCHREF1:FILEPATH1 BRANCHREF2:FILEPATH2 : compare two files from two different branches. The file's path could either be absolute or relative (use ./).
+
+<git format-patch -n OPT>
+prepare commits made locally for email submission. each commit is stored as a separate patch file. 
+n is the topmost n commits to be prepared for patching.
+A lot of options are available that determine the format of the content of the patch file.
+OPT = -o DIR : store the patches at path DIR rather than current directory.
+
+<git apply OPT PATCHFILE>
+redirecting diff's output to a PATCHFILE can be used to transfer changes.
+w/o OPT : apply patches from PATCHFILE to the repository
+OPT = -R : reverse the patches that were applied from the PATCHFILE
+
+<git am PATCHFILE>
+Apply a patch file to the current working directory and create the commit as well.
+
+<git log OPT [-NUM] [-- PATH]>
+Without any OPTION, shows the summarised history of the commits made in reverse chronological order.
+NUM usage limits the number of commits for which this information is displayed
+OPT = --stat : show abbreviated file and the number of changes for each commit and a small summary 
+OPT = --follow <filename> : get all the commits for a specific file.
+OPT = -p : show the differences/patches introduced in the code for each commit
+OPT = -S SOMECODE : display commits that added or removed that SOMECODE
+OPT = --graph : display the commits in a tree topology format. 
+OPT = --since/--after and --until/--before TIME : TIME in proper format to time-limit the output.
+OPT = --author/--committer : filter on the author/committer
+OPT = --grep STR : filter the results by STR in the commit message
+OPT = --decorate : get info on tags, HEAD and branch for the commits.
+OPT = --oneline : show the short hex and commit message in one line for each commit
+OPT = --format:"PLACEHOLDERS" : Specify a certain format using PLACEHOLDERS (see help for list of options)
+OPT = --name-status : To print the name of files updated and the action (A/M/D) performed on them along with usual commit information.
+OPT = --name-only : To print only the name of files updated along with usual commit information.
+OPT = --abbrev-commit : to show first few characters of the hash 
+OPT = -g : to walk the reflog entries instead of the commit ancestry
+OPT = --merge : to see the commits that are cause of conflict in a file (works only when there is a conflict)
+-- PATH =  path of directory/file to which logs will be limited
+
+<git log OPT BRANCH1 ^BRANCH2>   
+show commits reachable by BRANCH1 but not reachable by BRANCH2. Useful to know what commits haven't been merged from BRANCH1 to BRANCH2.
+More branches may be added like : BRANCH1 ^BRANCH2 ^BRANCH3
+OPT = --not : not BRANCH2 is equivalent to ^BRANCH2
+Example : 1) to know what changes would be pushed to remote : git log master ^origin/master  
+	        2) to know what changes will be pulled from remote : git log origin/master ^master
+
+<git log OPT BRANCH2..BRANCH1>
+all commits reachable by BRANCH1 that aren’t reachable by BRANCH2
+If BRANCH1 not specified then assumed as HEAD
+Cant query more than two branches at a time but useful in eg: checking which changes will be pushed : origin/master..HEAD
+Using three dots ... will show commits that are not common to both but are in either of them. 
+OPT = --left-right : know which commit from which side)
+
+<git show OPT COMMITID>
+shows details of commit for COMMITID( hex format). 
+If COMMITID not specified then the recent commit's details are shown.
+OPT = --name-only : list the files out that were changed in that commit.
+
+<git reset OPT HEAD~n/HASH>
+If the HASH is known then we can reset to any valid commit(forward/backward).
+OPT = --soft : move pointer of branch reference n commits back in the repository
+OPT = --mixed : --soft + repopulate index as per the latest HEAD (default option)
+OPT = --hard : --mixed + bring the working directory in the clean state as per the index's state
+
+<git reset OPT HASH FILE/PATH>
+FILE/PATH repopulated/updated as it was during the commit HASH.
+If HASH is HEAD, index is updated from the repository, hence unstaged.
+OPT = -p : Patching what to reset to
+
+<git checkout [OPT] BRANCH BASE-BRANCH>
+BRANCH is created with start point as BASE-BRANCH. BASE-BRANCH can be of form REMOTE-NAME/BRANCH.
+BASE-BRANCH if not given, current branch is used as the base for branching purpose.
+Switch to BRANCH from current branch. HEAD points to BRANCH now. 
+OPT = -b : create a new BRANCH and switch to it.
+OPT = -t BRANCH : set the upstream branch to BRANCH 
+
+<git checkout OPT FILE>
+w/o OPT : Discard the changes to a modified file to the way it was in last commit. This is done to file in modified state to return to unmodified state.
+OPT = --conflict : Checkout the file the way it was before merge resolution and with the configured resolution markers placed.
+OPT = --ours : Checkout the file the way it was before merge resolution and with the only our version of the content.
+OPT = --theirs : Checkout the file the way it was before merge resolution and with the only their version of the content.
+
+<git revert OPT BRANCH>
+w/o OPT : revert the some commits previously made 
+OPT = -m 1/2 : m tells which mainline of the two parents to choose
+
+<git branch [OPT] BRANCH>
+If no argument provided, then list all the available branches.
+No OPT : Creates a new BRANCH (another pointer to current commit) but does not switch.
+OPT = -vv : w/o BRANCH, lists out your local branches with info like what each branch is tracking and if local branch is ahead/behind.
+OPT = -d : to delete the pointer BRANCH if the commits traversed by it are reachable otherwise. Data is not removed.
+OPT = -D : delete the pointer BRANCH anyways. Data is not removed.
+OPT = -u : BRANCH is of form REMOTE-NAME/BRANCH. Used to change upstream branch for BRANCH.
+OPT = -m OLD_BRANCH NEW_BRANCH: rename the OLD_BRANCH as NEW_BRANCH. If OLD_BRANCH is not specified, current branch is used.
+OPT = -r : remove/list the remote tracking branch
+
+<git merge [OPT] BRANCH>
+w/o OPT : BRANCH is merged with the current branch.
+OPT = --ff-only : only fast forward merges are done
+OPT = --abort : revert back to your state before you ran the merge
+OPT = -Xignore-all-space or -Xignore-space-change 
+OPT = --squash BRANCH : add changes from BRANCH that are not in current branch by merging and stage them. Changes wont be commited.
+
+<git rebase [BASEBRANCH] TOPICBRANCH>
+rebase TOPICBRANCH with the BASEBRANCH. If no BASEBRANCH provided then current branch is taken as base.
+OPT = i : interactive
+Perils of rebasing can be negated by others by doing pull with a rebase or fetch followed by rebase.
+
+<git cherry-pick COMMIT-ID>
+apply the patch introduced in the due to COMMIT-ID to the current branch.
+
+<git stash OPT>
+w/o OPT = save : stash/save the modified tracked files and staged changes (not untracked files) and make working directory clean
+OPT = --all : stash everything and remove it from working directory
+OPT = --keep-index : do not stash the index but only the working directory
+OPT = -u/--include-untracked : stash the untracked files as well
+OPT = -p/--patch : stash patch by patch with interactive prompt
+OPT = show stash@{n} : the changes/diff that has been stashed. If stash is not specified, then most recent is assumed.
+OPT = list : list all the stashed work in progress(WIP) in the stack
+OPT = apply stash@{n} : apply the nth stash back but not remove it from the stack. If stash is not specified, then most recently applied.
+OPT = pop stash@{n} : apply the nth stash back and remove it from the stack. If the stash is not specified, then most recently applied.
+OPT = pop/apply --index stash@{n} : repopulate the index as well if any files were staged.
+OPT = drop stash@{n} : drop the nth stash from the stack. If stash is not specified, then most recently dropped.
+OPT = branch BRANCH : creates a new BRANCH on the current branch as base, applies the stash and drops it if successful else confict appear.
+
+<git clean OPT>
+w/o OPT : remove untracked files from the working directory
+OPT = -f : forcefully, OPT = -i : interactive, OPT = -d : remove directories as well, OPT = -n : dry-run only, OPT = -x : remove ignored files as well, OPT = -X, remove ignored files only
+
+<git remote OPT>
+w/o OPT : lists the aliases of each remote handle (server)
+OPT = -v : shows the URLs for read and write for the remote handle (git allows separate URLs for fetch and push)
+OPT = add REMOTE-NAME URL : add a remote handle for this repository.
+OPT = show REMOTE-NAME : see information about the remote server
+OPT = rename OLD-REMOTE-NAME NEW-REMOTE-NAME : rename the alias for the remote handle
+OPT = rm REMOTE-NAME : remove a remote handle
+OPT = set-url --push/--add/--delete : manipulate the urls for remote aliases
+OPT = set-branches : change the list of the branches tracked by the named remote
+OPT = prune REMOTE-ALIAS : remove the stale local remote tracking branches that are no longer in remote repo
+
+<git fetch OPT [REMOTE-NAME]>
+Allows to pull down all the data from REMOTE-NAME project
+It does not automatically merge the new project data with the existing one
+OPT = -p : prune stale remote tracking branches
+
+<git pull OPT [REMOTE BRANCH]>
+fetch and merge the commits automatically for current branch's remote and if specified for that REMOTE and BRANCH.
+OPT = --verify-signatures : verify if the signed with good GPG signatures.
+OPT = --rebase : rebase rather than merging if conflicts appear
+
+<git push REMOTE-NAME [OPT] [BRANCH] [TAGNAME]>
+push the changes to server aliased as REMOTE-NAME to branch BRANCH. Branch mapping between the repositories should available here.
+if the branches are different/mapping not there in branch names on two machine, give colon like [BRANCHMINE:BRANCHYOURS] in place of [BRANCH]
+All the commits on the remote server should be resolved on local repo. Only then the remote will accept any new commits.
+TAGNAME is used if we want the tags to be shared with the remote. By default, tags are not shared.
+OPT = --delete : delete remote branch BRANCH at server alias REMOTE-NAME. This removes the pointer from the remote branch and does not delete the data.
+OPT = --tags : push all tags to the remote
+OPT = --force : force push if the remote refuses to accept the commits as they can not be fast forwarded on the remote. Another way to do it would be like "git push REMOTE +BRANCH"
+
+<git tag OPT>
+w/o OPT : list all the tags in alphabetical order. use git show TAGNAME to view more information
+OPT = -l 'PATTERN' : search for a PATTERN in the tag list for repo
+OPT = -a TAGNAME -m "MSG" [COMMITID] : create an annotated tag. COMMITID specified to tag a particular commit else a latest commit is tagged.
+OPT = TAGNAME [COMMITID] : create a lightweight tag
+
+<git reflog>
+stores the logs of where and what the actions performed (clone/commit/pull etc) on references.
+
+<git archive BRANCH>
+create an archive from a named tree (BRANCH)
+
+<git shortlog>
+get a shorter history of all the commits on a project on the basis of committers
+
+<git blame>
+shows what revision and author last modified each line of a file.
+
+------------------
+PLUMBING COMMANDS :
+------------------
+<git rev-parse REFERENCE/BRANCH/COMMIT/HEAD>
+it gives the sha1 of the resource that is pointed to by the pointer given as arg. like HEAD as arg returns its commit's sha1
+
+<git hash-object OPT>
+takes some data, stores it in your .git directory (database) and gives you back the key (hash)
+eg : echo "you rock at this" | git hash-object -w --stdout ----> will return 15cebb1681c9b06bffe02548208f1e3f0709feb4
+
+<git cat-file OPT>
+takes the hash, identifies the type of data ad display the data for the hash.
+eg : git cat-file -p 15cebb1681c9b06bffe02548208f1e3f0709feb4 ---> will display "you rock at this"
+eg : git cat-file -p master^{tree}  ---> display the tree object pointed to by the last commit in the project
+Use -t in place of -p to display the type of the object.
+
+<git ls-tree>
+list the content of a tree object
+
+<git ls-files>
+Show information about files in the index and the working tree
+
+<git update-index>
+take the content that are in the index and not already committed and create a tree out of it
+
+git update-index --assume-unchanged path/to/file.txt
+some file that area in the repo but change often (like version files). These need not show in diff/status.
+Once added these file they wont show up in status/diff and wont be committed either.
+
+<git write-tree>
+take the hash of the tree and write it to the database
+
+<git commit-tree>
+take the hash of the tree and the prvious commit and create a new commit
+
+<git update-ref>
+add a reference to a commit. Commits point to previous one internally but refs point to the latest commit.
+Multiple refs may point to same/different commits and hence give us the notion of branching.
+
+<git symbolic-ref HEAD>
+gives the reference to which the symblic reference HEAD points to.
+
+<git gc>
+compress the content of the files with zlib and create pack files
+
+<git verify-pack>
+see what was packed
+
+<git count-objects>
+give the count of the object (use -v for details)
+
+<git merge-file>
+merge the files together from different stages : ours/common/theirs
+
+<git merge-base>
+find the common merge base for the two branches
+

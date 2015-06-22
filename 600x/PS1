@@ -1,5 +1,10 @@
-#Find a substring's occurance in a string s
+#COUNTING VOWELS
+count=0
+for a in 'aeiou':
+    count+=s.count(a)
+print count
 
+#COUNTING BOBS : Find a substring's occurance in a string s
 count=0
 a=0
 while True:
@@ -12,7 +17,7 @@ while True:
        
 print count
 
-#Find longest substring in alphabetical order
+#ALPHABETICAL SUBSTRINGS : Find longest substring in alphabetical order
 def findsslen(string):
     index=0    
     if len(string) == 1:

@@ -1,0 +1,12 @@
+#PROBLEM 1: PAYING THE MINIMUM
+totalPayment=0
+for month in range(12):
+    monthlyPayment=balance*monthlyPaymentRate
+    totalPayment+=monthlyPayment
+    newBalance=balance-monthlyPayment
+    balance=(newBalance)+(newBalance)*annualInterestRate/12
+    print "Month: "+str(month+1)
+    print "Minimum monthly payment: "+str(round(monthlyPayment,2))
+    print "Remaining balance: "+str(round(balance,2))
+print "Total paid: "+str(round(totalPayment,2))
+print "Remaining balance: "+str(round(balance,2))

@@ -10,3 +10,43 @@ for month in range(12):
     print "Remaining balance: "+str(round(balance,2))
 print "Total paid: "+str(round(totalPayment,2))
 print "Remaining balance: "+str(round(balance,2))
+
+#PROBLEM 2: PAYING DEBT OFF IN A YEAR
+def annualpay(monpay, balance):
+    mon=12
+    while mon>0:
+        balance=balance-monpay
+        balance=balance*(1+mi)
+        mon=mon-1
+    return balance
+
+mi=annualInterestRate/12
+for monpay in range(10, balance, 10):
+    if annualpay(monpay, balance) <=0 :
+        print 'Lowest Payment: '+str(monpay)
+        break
+        
+#PROBLEM 3: USING BISECTION SEARCH TO MAKE THE PROGRAM FASTER
+def annualpay(monpay, balance):
+    mon=12
+    while mon>0:
+        balance=balance-monpay
+        balance=balance*(1+mi)
+        mon=mon-1
+    return balance
+
+mi=annualInterestRate/12
+delta=0.01
+lb=balance/12
+ub=(balance*(1+mi)**12)/12
+cnt=0
+while True:
+    monpay=(ub+lb)/2
+    bal=annualpay(monpay, balance)
+    if ub - lb < delta:
+        print 'Lowest Payment: '+str(round(monpay,2))
+        break
+    elif bal < 0:
+        ub=monpay
+    else:
+        lb=monpay

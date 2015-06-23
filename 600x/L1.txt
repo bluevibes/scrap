@@ -17,3 +17,17 @@ bisection search : divide and conquer
 newton raphson root finding : uses derivatives to find root
 
 Turing complete : language/computational engine that can solve any type of computational problem. The runtime and size is not a limitation.
+
+Kinds of problems that computer cannot do :
+1. vague      - cannot be well formulated by humans
+2. difficult  - restricted by the technology and limitations of present. May be solved in the future.
+3. expensive  - problems that consume near infinite resources(time, space etc) to crack
+4. impossible - cannot be solved due tofundamental restrictions on computation
+
+Turing Primitives - with these any Turing complete problem can be programmed :
+Right: Move the Machine’s head to the right of the current square
+Left: Move the Machine’s head to the left of the current square
+Print: Print a symbol on the current square
+Scan: Identify any symbols on the current square
+Erase: Erase any symbols presented o the current square
+Nothing: Do nothing

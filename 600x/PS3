@@ -1,0 +1,120 @@
+def radiationExposure(start, stop, step):
+    '''
+    Computes and returns the amount of radiation exposed
+    to between the start and stop times. Calls the 
+    function f (defined for you in the grading script)
+    to obtain the value of the function at any point.
+ 
+    start: integer, the time at which exposure begins
+    stop: integer, the time at which exposure ends
+    step: float, the width of each rectangle. You can assume that
+      the step size will always partition the space evenly.
+
+    returns: float, the amount of radiation exposed to 
+      between start and stop times.
+    '''
+    expo=0
+    while start < stop:
+        expo+=step*f(start)
+        start+=step
+    return expo    
+
+def isWordGuessed(secretWord, lettersGuessed):
+    '''
+    secretWord: string, the word the user is guessing
+    lettersGuessed: list, what letters have been guessed so far
+    returns: boolean, True if all the letters of secretWord are in lettersGuessed;
+      False otherwise
+    '''
+    for a in secretWord:
+        if a not in lettersGuessed:
+            return False
+    return True
+
+def getGuessedWord(secretWord, lettersGuessed):
+    '''
+    secretWord: string, the word the user is guessing
+    lettersGuessed: list, what letters have been guessed so far
+    returns: string, comprised of letters and underscores that represents
+      what letters in secretWord have been guessed so far.
+    '''
+    a=''
+    for x in secretWord:
+        if x in lettersGuessed:
+            if a == '':
+                a=x
+            else:
+                a=a+' '+x
+        else:
+            if a == '':
+                a='_'
+            else:
+                a=a+' _'
+    return a
+
+def getAvailableLetters(lettersGuessed):
+    '''
+    lettersGuessed: list, what letters have been guessed so far
+    returns: string, comprised of letters that represents what letters have not
+      yet been guessed.
+    '''
+    import string
+    x=string.ascii_lowercase
+    for a in lettersGuessed:
+        if a in x:
+            x=x.replace(a,'')
+    return x
+
+def hangman(secretWord):
+    '''
+    secretWord: string, the secret word to guess.
+
+    Starts up an interactive game of Hangman.
+
+    * At the start of the game, let the user know how many 
+      letters the secretWord contains.
+
+    * Ask the user to supply one guess (i.e. letter) per round.
+
+    * The user should receive feedback immediately after each guess 
+      about whether their guess appears in the computers word.
+
+    * After each round, you should also display to the user the 
+      partially guessed word so far, as well as letters that the 
+      user has not yet guessed.
+
+    Follows the other limitations detailed in the problem write-up.
+    '''
+    flag=0
+    print 'Welcome to the game, Hangman!'
+    print 'I am thinking of a word that is %d letters long.'%(len(secretWord))
+    guess=8
+    chars=''
+    guesses=''
+    while guess>0:
+        print '-------------'
+        print 'You have %d guesses left.'%(guess)
+        print 'Available letters: '+getAvailableLetters(guesses)
+        char=raw_input('Please guess a letter: ').lower()
+        if char in secretWord:
+            if char in chars:
+                print "Oops! You've already guessed that letter: "+getGuessedWord(secretWord, chars)
+            else:
+                chars=chars+char
+                print 'Good guess :'+getGuessedWord(secretWord, chars)
+        else:
+            if not char in guesses:
+                print 'Oops! That letter is not in my word: '+getGuessedWord(secretWord, chars)
+                guess-=1
+            else:
+                print "Oops! You've already guessed that letter: "+getGuessedWord(secretWord, chars)
+        if isWordGuessed(secretWord, chars):
+            flag=1
+            break
+        if char not in guesses:
+            guesses=guesses+char
+    print '-------------'
+    if flag==0:
+        print 'Sorry, you ran out of guesses. The word was %s.'%(secretWord)
+    else:
+        print 'Congratulations, you won!'

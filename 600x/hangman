@@ -1,0 +1,40 @@
+import ps3_hangman
+
+word=ps3_hangman.chooseWord(ps3_hangman.wordlist)
+print '''Welcome to the game, Hangman!
+I am thinking of a word that is 4 letters long.'''
+
+def printWord(word, chars):
+	val=''
+	for a in word:
+		if a in chars:
+			val=val+a
+		else:
+			val=val+'_'
+	return val
+
+guess=8
+avail='abcdefghijklmnopqrstuvwxyz'
+chars=''
+while guess>0:
+	print '-------------'
+	print 'You have %d guesses left.'%(guess)
+	print 'Available letters: '+avail
+	char=raw_input('Please guess a letter: ')
+	if char in word:
+		if char in chars:
+			print "Oops! You've already guessed that letter: "+printWord(word, chars)
+		else:
+			chars=chars+char
+			avail.replace(char,'')
+			print 'Good guess :'+printWord(word, chars)
+			guess-=1
+	else:
+		avail.replace(char,'')
+		print 'Oops! That letter is not in my word: '+printWord(word, chars)
+		guess-=1
+	if printWord(word, chars)==word:
+		print 'Congratulations, you won!'
+		exit(0)
+print '-------------'
+print 'Sorry, you ran out of guesses. The word was '+word

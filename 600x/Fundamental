@@ -31,3 +31,5 @@ Print: Print a symbol on the current square
 Scan: Identify any symbols on the current square
 Erase: Erase any symbols presented o the current square
 Nothing: Do nothing
+
+

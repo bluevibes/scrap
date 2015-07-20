@@ -1,0 +1,33 @@
+#Checking all numbers one by one
+
+def genPrimes():
+    primes = []   # primes generated so far
+    last = 1      # last number tried
+    while True:
+        last += 1
+        for p in primes:
+            if last % p == 0:
+                break
+        else:
+            primes.append(last)
+            yield last
+
+#Sieve of Eratosthenes
+
+def genPrimes():
+    a=[x for x in range(2, n+1)]
+    done=False
+    while not done:
+        if a == []:
+            done=True
+        else:
+            prime=a.pop(0)
+            i=prime
+            while not prime*i > n:
+                if a.count(prime*i) != 0:
+                    a.remove(prime*i)
+                i+=1
+            yield prime
+n=1000  #calculate upto n
+
+

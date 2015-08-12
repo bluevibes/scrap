@@ -1,0 +1,7 @@
+ls -ad .* (list only the hidden files)
+-a = list hidden aswell
+-B = dont list swap(~) files
+-m = comma separated 
+-l = long listing format
+-i = print the inode number
+-s = print the allocated size of the files in blocks

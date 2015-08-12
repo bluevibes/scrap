@@ -1,0 +1,20 @@
+getopts obtains options and their arguments from a list of parameters that follows the standard POSIX.2 option syntax (that is, single letters preceded by a - and possibly followed by an argument value; the single letters may be grouped).
+The optstring gives all the option letters that the script recognizes. For example, if the script recognizes -a, -f and -s, optstring is afs. If you want an option letter to be followed by an argument value or group of values, put a colon after the letter, as in a:fs. This indicates that getopts expects the -a option to have a value following it. 
+
+
+ERRORCODE=255
+while getopts ":r:p:c:d:x:" opt; do
+      case $opt in
+        r ) REGION="$OPTARG";;
+        p ) PLATFORM="$OPTARG";;
+        c ) CUSTOMER="$OPTARG";;
+        d ) DOWNLOAD="$OPTARG";;
+        x ) CLEAN="$OPTARG";;
+        \? ) echo "Invalid option: - $OPTARG"			#invalid option are stored under ?
+            exit $ERRORCODE;;
+        : ) echo "Option - $OPTARG requires an argument."	#OPTARG is set as the argument is recieved else : is kept
+            exit $ERRORCODE;;
+      esac
+done
+
+This case checks only for the options and their corresponding values and not the validity of the received values. this should be done by the user by testing the arguments received.

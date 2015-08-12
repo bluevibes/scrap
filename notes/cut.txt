@@ -1,0 +1,9 @@
+cut -c2-5 cut.txt
+cut -d= -f 1,3 pat
+cut -b 2 cut.txt
+
+-b : specifies the bytes to be printed.
+-c : specifies the range of characters in the line. if a character is represented as byte, then b and c are same.
+-d : specifies the delimiter in between the fields
+-f : specifies the field columns to be printed
+--complement : print revers of the selection/match

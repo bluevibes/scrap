@@ -1,0 +1,14 @@
+tr [options] set1 [set2]
+    -c : complements the set of characters in string.
+    -d : deletes the characters in set1
+    -s : replaces repeated characters listed in the set1 with single occurrence
+    -t : truncates set1
+
+
+tr [a-z] [A-Z]                  translate to upper case from the input
+tr [:lower:] [:upper:]          same thing
+tr -s " " ","	    	        remove multiple occurances of space and replace by ,
+tr -s '\n' ' '      	        remove the lines
+tr -d [:digit:]	                remove all the digits
+tr -cd [:digit:]		        remove all other than the digit
+

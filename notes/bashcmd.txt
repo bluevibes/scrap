@@ -1,0 +1,49 @@
+COMMANDS
+--------
+who : shows who is logged in
+logname : print user´s login name
+whoami : print effective userid
+who am i : get the details for the terminal
+w : shows a kind of mix of uptime and who	
+tty : teletype is a hardware or kernel emulated terminal
+stat : display file/filesystem status
+setterm -term linux -back black -fore cyan -clear : to change the terminal color and font color
+nautilus <PATH> : open the dir in gui
+which : tells the path of the cmd/whatever being used
+type : displays information about a command
+readlink -f FILE : gives completely resolved name of FILE
+whatis : oneline manual page description
+id <username> : to get diff ids of a user
+bc : calculator
+file : return type of the file
+locate : find a file
+hostname : to get the hostname
+tail : print the last certain lines of a file
+head : print the first certain lines in a file
+ac -dp : shows user logged in time from /var/log/wtmp maintained by init and login
+at : run a command at sometime in future
+watch : run a command again after some time interval to see how things change
+less : allows users to view a file wth searching and scrolling in both direction
+split : split an input files into multiple files. eg: split FILE -l 50 ---> split FILE into files with 50 lines in each output file
+lsof : list open files
+
+TIPS
+----
+/dev/null : ideal sink for any not required data , if tried to read from it, returns end of file
+/dev/tty : output to tty
+the order of the options does not matter as long as the commands are mutually exclusive
+umask set the default file permission . if umask=022 then default file permission is 644 for file and 755 for directory
+IFS by default is whitespace. Can change it during a script /terminal for the life time of that script/terminal.
+Shell builtins are described in manpage of bash
+Redirection is done before the command is executed and thus a file cant be both input and output source and sink respectively.
+
+TRICKS
+------
+SCRIPTPATH=$( cd $(dirname $0) ; pwd -P ) to get the path of a scipt in a foolproof way.
+stty -echo : removes echo of the input from user (like when entering passwords in terminal)
+UNIVERSAL SHORTCUTS : ALT+[n] -> the tab of nth number, CTRL+ALT+[NUMPAD] to reset the window position
+TERMINAL WINDOW RESIZE : select a window in terminal by ctrl+w. increase/decrease font size by ctrl+w+(+/-)
+WINDOWS/LINUX: A line ends with a carriage return and a line feed in windows whereas in linux a line ends only with a line feed
+arrfqdn=(${fqdn//./ }) : split fqdn on . and store as array
+DEBUGGING : trace commands set -x (unset using set +x)
+LINE CONTINUATION : use \ to allow multiple lines of statements to treated as a single line. \ tells bash to ignore the new line. 

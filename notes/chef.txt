@@ -1,0 +1,21 @@
+It is important to store the code in a repository.
+The configuration changes that are needed to make on a commit can be done by chef using policies.
+the policy will be stored as a configuration code in a repo, so that chef can ensure that each node complies with the policy specified.
+Using chef you can describe the state that the node should be in but not how to get there.
+Chef will not only be used for provisioning the resources but also for configuration drift.
+
+Chef client can run periodically to ensure that the nodes are in desired state. When a node is encountered, the chef client gathers the current configuration of node, download the policies from the chef server and configure the node accordingly. Node executes chef client. Chef client asks the server what policies should be followed. Chef server hold the list of all the policies that help maintain the infrastructure. Each node has a run list associated with it.
+
+Run list:
+Ordered collection of policies that the node should follow.
+
+Resource :
+Piece of system and its desired state. eg : package that is installed, service that is running, file that is generated, user that should be managed. Eg: template, package, service
+
+Recipe :
+Configuration files that describe resources and their desired state. eg: Recipe can install packages, manage services, manipulate files, execute other recipes etc
+
+Chef search: can search for nodes on various criteria.
+
+Cookbook : 
+contains recipes, files, templates, libraries etc that are requiered to configure a portion of the infrastructure

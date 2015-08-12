@@ -1,0 +1,6 @@
+SCRIPTPATH=$( cd $(dirname $0) ; pwd -P ) to get the path of a scipt in a foolproof way.
+cd -: allows to toggle between last two current directories
+dirs: Display the directory stack. The current directory is always listed first.
+pushd: Push directory into the stack
+popd: Pop directory from the stack and cd to it
+

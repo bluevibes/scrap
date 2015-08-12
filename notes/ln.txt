@@ -1,0 +1,44 @@
+Inode/index : 
+a data structure that stores metadata (other than the file name and file contents) about the file system to be used by the operating system. A directory/file listing/structure is used to associate file names and inode number which is visible to the user through a windowing system. The metadata stored includes inode number, ACL, owner, group, permission, file access,change and modification time, disk block, number of blocks used etc.
+
+Symbolic links aka symlinks/soft links : ln -s <source> <linkname> 
+A new file with a new inode is created with pointer to the inode of the original file
+Takes more storage space
+A new directory listing entry and a new inode entry is created
+Similar to shortcuts on windows
+
+             ------------------------------------------------------------------------------  
+             |   original file <---------- soft link                |                     | 
+             |         |                       |                    |- what user sees     |                                          
+             |---------|-----------------------|--------------------| (directory listing) |
+             |         |                       |                                          |
+             |         V                       V                    |                     | 
+             |      original <------------ soft link                |- what os sees       |
+             |      file inode               inode                  |  (inode/index)      |
+             |           \                                                                |
+             |------------\-----------------------------------------|                     |
+             |             \_                                       |- file system where  |
+             |            Data on the hard disk                     |  data stored        |
+             ------------------------------------------------------------------------------
+
+
+Hard link : ln <source> <linkname>	
+A direct pointer to the original inode of the original file is created
+Takes less storage space
+A new directory listing entry is just made to a preexisting inode
+stat <filename> gives the number of 'Links' there are for the given file. All must be removed for a file to be declared deleted.
+
+             ------------------------------------------------------------------------------   
+             |   original file <---------- hard link                |                     | 
+             |            \                  /                      |- what user sees     |                                              
+             |-------------\----------------/-----------------------| (directory listing) |
+             |              \              /                                              |
+             |               \_          _/                         |                     | 
+             |                  original                            |- what os sees       |
+             |                 file inode                           |  (inode/index)      |
+             |                     |                                                      |
+             |---------------------|--------------------------------|                     |
+             |                     V                                |- file system where  |
+             |            Data on the hard disk                     |  data stored        |
+             ------------------------------------------------------------------------------
+

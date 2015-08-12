@@ -1,0 +1,41 @@
+comm 1.txt 2.txt
+
+compare two sorted files line by line
+col 1 -- lines only in file1, col 2 -- lines inly in file2, col 3 -- lines common in both
+use sort utility to get a file sorted
+
+--------------------------
+cmp file1 file2
+compare two files byte by byte
+
+--------------------------
+diff orig_file new_file
+OUPUT : a stands for added, d for deleted and c for changed. Line numbers of the original file appear before these letters and those of the modified file appear after the letter.line with < are from file 1 and are different from file 2. line with > are from file 2 and are different from file 1.
+
+-q = report only if the files differ else not
+-s = report identical if files are same else report the difference as usual
+
+-c = context format
+A "!" represents a change between lines that correspond in the two files. A "+" represents the addition of a line, while a blank space represents an unchanged line. At the beginning of the patch is the file information, including the full path and a time stamp. At the beginning of each hunk are the line numbers that apply for the corresponding change in the files. A number range appearing between sets of three asterisks applies to the original file, while sets of three dashes apply to the new file. The hunk ranges specify the starting and ending line numbers in the respective file.
+
+-u = unified format ( doesnt display redundant info as in -c)
+The format starts with the same two-line header as the context format, except that the original file is preceded by "---" and the new file is preceded by "+++". Following this are one or more change hunks that contain the line differences in the file. The unchanged, contextual lines are preceded by a space character, addition lines are preceded by a plus sign, and deletion lines are preceded by a minus sign.
+in u each file has a character associated - and +. I a line is present in only one of the files then it is preceded by that file's char. no difference is depicted by space.
+
+-e = output an ed script
+to the ouput append w and store it as a file. The file basically tells the differences with respect to orig_file(our 1st param)
+this will be used to overwrite the changes from the script to original file as : ed - file_orig < script_file
+where - denotes ed to read from std input
+
+-y = show side by side difference
+-r = find recursively any difference, the 
+-i = ignore case
+-b = ignore white space changes
+-B = ignore changes whose lines are all blank
+-w = ignore all white space
+-Z = ignore trailing spaces
+-d = try hard to spot the smaller changes
+
+---------------------------
+sdiff FILE1 FILE2
+view side by side difference

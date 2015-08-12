@@ -1,0 +1,49 @@
+gives a snapshot of the current processes
+ps reads virtual file system /proc. The file in this directory are of zero length but they store data for the processes on the system.
+w/o any options it returns the processes for current terminal only
+
+Process selection options : 
+-a : select all processes other than session leaders and processes not associated with any terminal
+-C : select all the processes that whose executable name is given in cmdlist. eg: ps -C vi,bash
+-d : select all processes other than session leaders
+-e : select all processes (same as -A)
+-G : select processes by GID provided as a list after this option
+-p : select processes by PID provided as a list after this option. eg: ps -p 4091,4051
+-s : select processes by session list
+-t : select processes by tty list. Terminals can be specified in several forms: /dev/ttyS1, ttyS1, S1. Use "-" to select processes not attached to any terminal.
+-u : select processes by user list.
+
+Output format control :
+-f : show full format listing
+-F : show extra full format listing
+-j : show job format
+-l : show long listing format
+-o : set user defined format by giving format as parameter to this option. eg : ps -eo "%p %y %x %c"  eg2 : ps -eo "user tty ppid pid nice"
+       CODE   NORMAL   HEADER
+       %C     pcpu     %CPU
+       %G     group    GROUP
+       %P     ppid     PPID
+       %U     user     USER
+       %a     args     COMMAND
+       %c     comm     COMMAND
+       %g     rgroup   RGROUP
+       %n     nice     NI
+       %p     pid      PID
+       %r     pgid     PGID
+       %t     etime    ELAPSED
+       %u     ruser    RUSER
+       %x     time     TIME
+       %y     tty      TTY
+       %z     vsz      VSZ
+
+Output modifiers :
+--cols/--row : set the cloumns/rows for the output screen
+-H : show process heirarchy
+--headers : repeat header lines per page of the output
+--no-headers : does not print the header
+--sort : specify the sorting order. eg: ps -ef --sort=-pid,+tty
+
+Thread display :
+-L : show thread with LWP
+-m : show thread after process
+

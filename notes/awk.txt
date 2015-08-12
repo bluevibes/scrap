@@ -1,0 +1,12 @@
+genaral format : condition { action }
+awk '{print $0}' = print the entire input string
+awk '{print $1}' = print the first field's value and so on for 2,3.....
+
+NR = built in variable for number of records. gives the number without $ and the value with value
+NF = built in variable for number of fields. gives the number without $ and the value with value
+-F = set FS(field separator),Default is space.eg:  awk < log -F: '{ print $2 }'
+BEGIN and END are special patterns
+example : ls -l | awk 'BEGIN { print "month" } END { print "ends" } $2 == 1 { print $6 }'
+
+awk ' $1 > 200 ' employees.txt  #print all the lines from file where field 1 is greater than 200
+awk '$4 ~/Technology/' employee.txt #print if 4th field matched with string provided

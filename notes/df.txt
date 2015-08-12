@@ -1,0 +1,20 @@
+df : prints the system disk space usage
+-a : include dummy file systems 
+-B <size>: print the size according to parameter following it - K/k(kb), M/m(mb), G/g(gb), T/t(tb). 
+--total : print the grand total
+-i : list the inode information instead of block usage
+-h : human readable form
+-l : limit output to listing of local file systems
+--output=<field_list>: use the output format defined by field_list.
+-T : print the type of the file system
+-t <TYPE>: limit the output to file systems of type TYPE
+-x <TYPE>: limit the output to file systems not of type TYPE
+
+Note:
+Here lists are comma separated name of valid fields
+Valid fields are :source,fstype,itotal,iused,iavail,ipcent,size,used,avail,pcent,target.
+
+Example :
+df --output='source','target'
+df -B m
+df -x ext4 -T

@@ -1,0 +1,28 @@
+date -R/-I : Print the date in RFC/ISO format
+date -f <file> : takes a file with a list of dates, one date per line and print them in the std format. If date is invalid return error message
+date -d <string> : takes the string and extract the date, prints the date in the std format if valid else gives invalid date error.
+date -s <string> : takes the string and sets it as the current date. 
+date -u : print the date in UTC format
+date -r <file> : print the last modification date/timestamp of the date file
+
+relative dates : date -d @1414738800 (1414738800 seconds from epoch, it is a timestamp)
+Unix epoch (reference date) = 1970-01-01 UTC
+An empty/absent string/parameter indicates the beginning of the day/time
+
+Print date as specified in the format. refer the man page for more format option :
+example:
+date "+%Y-%m-%dT%H:%M:%S"            	#%char is conversion specification/field descriptor
+date "+DATE: %m/%d/%y%nTIME: %H:%M:%S"
+
+date allows usage of various forms of human readable string to be provided as parameters
+example: 
+date -d 'TZ="America/Los_Angeles" 09:00 next Fri'		#Use tzselect to get time zones.
+date -d "yesterday"
+date -d "2 years ago"
+date -d "next month"
+date "+DATE: %m/%d/%y%nTIME: %H:%M:%S" -d "+44 weeks -59 minutes "
+
+Study the placeholders which provide almost everything.
+Like to get the time zone in alphabets : date "+&Z" 
+to get timestamp of some date : date -d "+1 year" "+%s"
+

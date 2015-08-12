@@ -1,0 +1,104 @@
+1. <COMMAND> & 
+command will not run completely after the login session is terminated
+
+2. nohup <COMMAND> &
+run a command using & and keep it running even after the session is logged out
+
+3. screen 
+run a command using this so that user may log off from the terminal and reconnect back.
+
+	1. Command: screen
+	You are now inside of a window within screen. This functions just like a normal shell except for a few special characters.
+	If there are more than one screen sessions, you can use screen -ls to list them.
+
+	2. Control Command
+	Command: “Ctrl-a”
+	Screen uses the “Ctrl-a” as a signal to send commands to screen instead of the shell.
+		break       ^B b         flow        ^F f         lockscreen  ^X x
+		pow_break   B            screen      ^C c         width       W
+		clear       C            focus       ^I           log         H
+		pow_detach  D            select      '            windows     ^W w
+		colon       :            hardcopy    h            login       L
+		prev        ^H ^P p ^?   silence     _            wrap        ^R r
+		copy        ^[ [         help        ?            meta        a            
+		quit        \            split       S            writebuf    >
+		detach      ^D d         history     { }          monitor     M            
+		readbuf     <            suspend     ^Z z         xoff        ^S s
+		digraph     ^V           info        i            next        ^@ ^N sp n   
+		redisplay   ^L l         time        ^T t         xon         ^Q q
+		displays    *            kill        K k          number      N            
+		remove      X            title       A		  dumptermcap .
+                lastmsg     ^M m         only        Q            removebuf   =
+                vbell       ^G           fit         F            license     ,
+                other       ^A           reset       Z            version     v
+
+		^]  paste .
+		"   windowlist -b
+		-   select -
+		0   select 0
+		1   select 1
+		2   select 2
+		3   select 3
+		4   select 4
+		5   select 5
+		6   select 6
+		7   select 7
+		8   select 8
+		9   select 9
+		I   login on
+		O   login off
+		]   paste .
+	Key bindings are the commands the screen accepts after you hit “Ctrl-a”. Reconfigure these keys in a .screenrc file.
+
+	3. Creating Windows
+	Command: “Ctrl-a” “c”.
+	This will create a new window for you with your default prompt.  Your old window is still active with the programs running on it.
+
+	4. Switching Between Windows
+	Command: “Ctrl-a” “n”
+	Screen allows you to move forward and back. “Ctrl-a “number” to get swithch to the screen.
+	Toggle through window with “Ctrl-a” “n” for the next window or “Ctrl-a” “p” for the previous window.
+
+	5. Detaching From Screen
+	Command: “Ctrl-a” “d”
+	Detaching is the most powerful part of screen.  Screen allows you to detach from a window and reattach later.
+	If your network connection fails, screen will automatically detach your session! This will drop you into your shell.
+	All screen windows are still there and you can re-attach to them later.
+ 
+	6. Reattach to Screen
+	Command: screen -r
+	If your connection drops or you have detached from a screen, you can re-attach by just running the command.
+	if you have multiple screens you may get this:
+	There are several suitable screens on:
+	31917.pts-5.office      (Detached)
+	31844.pts-0.office      (Detached)
+	Type "screen [-d] -r [pid.]tty.host" to resume one of them.
+	If you get this, just specify the screen you want
+	screen -r  31844.pts-0.office
+	
+	7. Logging Your Screen Output
+	Command: “Ctrl-a” “H”, creates a running log of the session.
+	Screen will keep appending data to the file through multiple sessions. Using the log function is very useful for capturing what you have done, especially if you are making a lot of changes. If something goes awry, you can look back through your logs.
+
+	8. Getting Alerts
+	Screen can monitor a window for activity or inactivity. This is great if you are waiting for output.
+	Command: “Ctrl-a” “M”
+	If you are waiting for output from a long running program, you can use this to look for activity. Screen will then flash an alert at the bottom of the page when output is registered on that screen.
+	Command: “Ctrl-A” “_”.
+	You can also monitor for inactivity. You can be notified when there is no more output or monitor for silence.
+
+	9. Locking Your Screen Session
+	Command: “Ctrl-a” “x”
+	You can lock your screen session using “Ctrl-a” “x”.  This will require a password to access the session again.
+
+	10. Stopping Screen
+	Command: exit
+	This will close that screen window.  You have to close all screen windows to terminate the session.
+	You should get a message about screen being terminated once you close all windows : [screen is terminating]
+	Alternatively, you can use “Ctrl-a” “k”.  You should get a message if you want to kill the screen.
+
+4. at 
+run a command at a particular time and date.
+
+5. watch 
+execute a program periodically, showing output fullscreen. Useful for checking how things change with time.

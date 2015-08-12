@@ -1,0 +1,96 @@
+COMMAND LINE OPTIONS :
+view FILE/ vi -R FILE : Open file in readonly mode
+vi -r FILE : recover FILE from the swap
+vi + FILE : open the FILE at the last line
+vi +/PATTERN : open File at the PATTERN 
+vi +n FILE : open FILE at the nth line
+
+VI COMMANDS :
+Two types of commands that are used in "screen mode" that interpret a word in different sense :
+1) Upper case : consider a WORD as a contiguous sequence of non whitespace characters. eg : 192.168.1.1
+2) Lower case : consider a word as a contiguous sequence of numbers, letters and underscore. eg : cat_dog
+
+MOVING :
+h,j,k,l : left, down, up, right by character
+w,W/b,B/e,E : forward/backward/end by word,WORD
+0,$ : move cursor to beginning/end of current line
+(,)/{,}/[[,]] : beginning of the previous, next sentence/paragraph/section
+ENTER : first non blank character of next line
+H,M,L : move the cursor to the left top/middle/last line
+
+SCROLLING :
+ctrl+f/ ctrl+b : scroll forward/backward one screen
+ctrl+d/ ctrl+u : scroll down/up half a screen
+ctrl+e/ ctrl+y : scroll one line up/down
+ctrl+l : redraw screen
+
+EXITING
+:x, ZZ, :wq = save changes and exit
+:q = if no changes exit
+:q! = ignore any changes and exit
+:w <file> = write to the file. if nothing specified, saved to current file
+
+COMMANDS
+i/I : insert after/before cursor
+a/A : append after/before cursor
+o/O : open a new line after/before current
+x/X : delete/backspace
+^/$ : move cursor to begining/end of the line
+:n, nG : move to nth line 
+G : move cursor to last line
+nD,ndd,:nd : delete n lines to the general buffer
+nyy,:ny : yank n lines
+p/P : paste after/before the line
+. : repeat last text changing command
+J : join current and next line
+u : undo last change
+U : undo all changes to the line
+:r file : insert contents from file after the current line
+
+BUFFERS
+general buffer is used when a buffer is not specified
+"<name><command>
+"z6dd : delete 6 sebsequent lines and put them to buffer z
+"z1p : put 1st line from buffer z 
+
+SEARCHING
+/<str> : search forward for string
+?<str> : search back for string
+n : search for next occurance of string
+N : search for previous occurance of string
+:[address] [%]s/pattern/string/g or c  [% used for entire file else changes made only for the line/g for globally replace/c for confirm before replace]
+*,# : find the next/previous occurance of the current word under the cursor.
+% : find the matching brace/bracket/parenthesis of the next brace/bracket/parenthesis
+
+COMMANDLINE NAVIGATION
+vi +10 FILE : open FILE and jump to 10th line
+vi +/char FILE : open FILE and jump to first occurance of char
+vi +?int FILE : open FILE and jump to last occurance of int
+
+ADDRESS
+. = current line
+n = nth line
+.+n = current line + n lines
+[address1],[address2] : specify range
+
+TABS
+:vsplit/vsp <full path> -- split the screen vertically into two vi tabs/windows
+:split/sp <full path>   -- split the screen horizontally into two vi tabs/windows (use ctrl+w to switch between them)
+
+CONFIGURATION
+add no before the command or ! after to unset it. eg: nonu / nu!
+:set all        -- show all possible parameters
+:set number/nu  -- number the lines
+:set tabstop/ts -- number of spaces that represent a single tab
+:set autoindent -- copy indent on carriage return from previous line
+:set shiftwidth -- number of spaces that represent a single indent
+:set expandtab  -- expand the tabs into appropriate number of spaces set by tabstop
+:set softabstop -- mixed output depending on tabstop value and softabstop value
+:set showmatch  -- show matching perenthesis
+:set showmode   -- show the mode (default)
+
+OTHERS
+!!program : insert the output of the program after the line
+:sh -- execute shell command. ctrl+D to return back
+~ -- toggle between uppercase and lowercase
+

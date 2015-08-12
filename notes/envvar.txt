@@ -1,0 +1,9 @@
+export <variable>
+       -> export for current shell and the processes started from the current shell and the current shell will have the variable
+       -> add this command to .bashrc	
+       -> add this to /etc/environment.  An alternative is to create a file for the purpose in the /etc/profile.d directory. Variable expansion does not work in /etc/environment. Files with the .sh extension in the /etc/profile.d directory get executed whenever a bash login shell is entered.
+env - run a program in a modified environment
+printenv - print all or part of environment
+unset <env_var>         -> to erase the existence of environment variable completely
+export -n <env_var>     -> to remove the entry for env var but maintain its value as a shell var	
+Example: use export CDPATH=~repo/cloud:~repo/cloud/tools:~repo/cloud/bin to check these directories when executing cd

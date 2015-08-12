@@ -1,0 +1,23 @@
+ping : send ICMP ECHO_REQUEST to network hosts
+-b : allow pinging broadcast addresses
+-c COUNT : stop after sending COUNT messages
+-f : flood ping
+-i : set the interval between packets. Normal pings have 1sec and flood pings have .2sec as default.
+-l NUM : send NUM number of packets wthout wailing for reply. A non-super user may only send upto 3 such packets.
+-m MARK : tag the packets with MARK
+-n : numeric output only
+-q : quiet output. only the summary is printed.  
+-s SIZE : set packet size to SIZE. Default is 56 for payload and 8 for header.
+-w DEADLINE : set DEADLINE as number of seconds upto which the command waits or before that all the COUNT messages have been received.
+
+Note:
+Users are only allowed to do ping with 200ms inbetween the packets, root however can do it with no gap at all.
+Flooding of packets will only affect hosts that dont handle such age old techniques
+If ping does not receive any reply packets at all it will exit with code 1. If a packet count and deadline are both specified, and fewer than count packets are received by the time the deadline has arrived, it will also exit with code 1. On other error it exits with code 2. Otherwise it exits with code 0. This makes it possible to use the exit code to see if a host is alive or not.
+
+Example:
+returns 0 : ping google.com -c 4 -w 10
+returns 1 : ping google.com -c 4 -w 2
+overflood a host's input buffer : sudo ping HOST -f -s 20000
+get ips of hosts in local network : for ip in $(seq 1 254); do ping -c 1 192.168.1.$ip>/dev/null; [ $? -eq 0 ] && echo "192.168.1.$ip UP" || : ; done
+

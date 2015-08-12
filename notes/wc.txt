@@ -1,0 +1,7 @@
+wc <file>    : 	    number of lines, number of words, number of bytes and filename
+wc -l <file> : 	    number of lines and filename
+wc -w <file> : 	    number of words and filename
+wc -c <file> : 	    number of bytes and filename
+wc -L <file> : 	    length of longest line and filename
+wc -m <file> : 	    number of characters and filename
+

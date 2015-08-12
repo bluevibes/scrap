@@ -1,0 +1,20 @@
+shopt [-pqsu] [-o] [optname …]
+shopt : toggle between various shell options
+      : typing only shopt gives the status if all the optnames
+
+options are:
+-s : Enable (set) each optname.
+-u : Disable (unset) each optname.
+-q : Suppresses normal output; the return status indicates whether the optname is set or unset.
+-o : Restricts the values of optname to be those defined for the -o option to the set builtin
+
+some optnames are :
+autocd : to automatically switch to directory path typed without typing cd
+cdable_vars : an argument to the cd builtin command that is not a directory is assumed to be the name of a variable whose value is the directory to change to.
+cdspell : minor errors (transposed/missing/repetitive character) in the spelling of a directory component in a cd command will be corrected. (interactive shells only)
+cmdhist : Bash attempts to save all lines of a multiple-line command in the same history entry. This allows easy re-editing of multi-line commands.
+expand_aliases : aliases are expanded (interactive shells only)
+interactive_comments : allow using # to comment the following characters till the end of the line
+login_shell : set by the shell if it is a login shell
+restricted_shell : it is set when a shell is initiated using rbash (restrictive bash) and cannot be set manually
+xpg_echo : enable or disable expansion of escape characters (\a,\n,\t..). Off by default hence the characters wont be expanded

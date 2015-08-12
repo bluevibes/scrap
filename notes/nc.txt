@@ -1,0 +1,35 @@
+nc : netcat utility used for tcp udp connections
+
+-4 : use IPV4 only
+-6 : use IPV6 only
+-b : allow broadcast
+-d : dont read from stdin
+-D : enable debugging mode
+-i time : specify delay time interval between connection lines
+-I length : specify length od TCP input buffer
+-k : keep listening for another connection after the current connection is complete
+-l : listen for incoming connection
+-n : do not perform DNS or service lookup
+-O length : specify length of the TCP output buffer
+-p source_port : specify the source port nc should use
+-q seconds : keep listening after EOF upto seconds, if seconds is negative wait forever
+-s source_ip : specifies the IP of the interface which is used to send the packets.
+-u : use udp instead of default tcp
+-x proxy_address:port : use proxy address and port when connecting to the destination
+-w TIMEOUT : use TIMEOUT to stop waiting after a time for response
+-v : verbose output
+-z : scan for listening daemon
+
+Example :
+nc -zuv -s 192.168.1.7 www.google.com 443
+Connection to www.google.com 443 port [udp/https] succeeded!
+
+nc -zv -w 10 192.168.1.1 80
+Connection to 192.168.1.1 80 port [tcp/http] succeeded!
+
+nc -l 2389 #server listening
+nc localhost 2389 #client opens up for communication, now send messages
+
+nc -kl 2389 >>b #accept file content
+cat a | nc localhost 2389 #send file content
+

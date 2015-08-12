@@ -1,0 +1,19 @@
+sed 's/<findthis>/<replacewith>/FLAG'
+
+s here is the substitute command
+FLAG could be :
+g Replace all the instance of REGEXP with REPLACEMENT
+n Could be any number,replace nth instance of the REGEXP with REPLACEMENT.
+p If substitution was made, then prints the new pattern space.
+i match REGEXP in a case-insensitive manner.
+w file If substitution was made, write out the result to the given file.
+
+Example :
+sed -n 's/Windows/Linux/gpw var' file.txt   print changes and write the output to var
+sed 's/\b\(\w\)/\U\1/g'                     capitalise the 1st letter of every word
+sed -i 's/^[ \t]*//' t.txt                  trim leading whitespaces
+sed '1s/^/\/\/ Copyright FooCorp\n/' *.c    add a //comment to every file's 1st line
+sed –i '/foo/ d' file                       delete lines with foo
+sed –i '1,2 d' file                         Delete first two lines
+
+

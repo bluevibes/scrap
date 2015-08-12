@@ -1,0 +1,66 @@
+#positional parameters
+myparameter=foobar
+ssh user@server "myscript $myparameter"
+
+#env arguments
+ssh user@host ARG1=$ARG1 ARG2=$ARG2 'bash -s' <<'ENDSSH'
+  # commands to run on remote host
+  echo $ARG1 $ARG2
+ENDSSH
+
+#script with some env vars
+ssh root@MachineB ARG1="arg1" ARG2="arg2" 'bash -s' < local_script.sh
+
+#script with options and arguments
+$ ssh  < ./ex.bash serverA "bash -s -- --time bye"
+--time bye
+$ ssh serverA "bash -s" -- < ./ex.bash "-time" "bye"
+-time bye
+
+#escaping splitting when args have spaces
+myparameter='hello; rm somefile'
+ssh user@server "echo $(printf '%q' "$myparameter")"            
+
+#%q output the corresponding argument in a format that can be reused as shell input.
+$ printf '%q\n' "argument with space"
+argument\ with\ space
+$ printf '%q\n' "argument with 'single quotes'"
+argument\ with\ \'single\ quotes\'
+$ printf '%q\n' 'argument with "double quotes"'
+argument\ with\ \"double\ quotes\"
+$ printf '%q\n' 'argument with *? glob and $ other ` special { chars'
+argument\ with\ \*\?\ glob\ and\ \$\ other\ \`\ special\ \{\ chars
+$ foo=$(printf '%q\n' 'argument with *? glob and $ other ` special { chars')
+$ echo "$foo"
+argument\ with\ \*\?\ glob\ and\ \$\ other\ \`\ special\ \{\ chars
+$ eval echo "$foo"
+argument with *? glob and $ other ` special { chars
+
+#expansion control          #In order to make variables expansion work, use bash -c
+user@host> ssh user2@host2 "echo \$HOME"
+prints out /home/user2
+while
+user@host> ssh user2@host2 "echo $HOME"
+prints out /home/user
+
+#here documents and nesting of commands
+ssh user@host <<'ENDSSH'                        #see ssh -T
+#commands to run on remote host
+ssh user@host2 <<'END2'
+# Another bunch of commands on another host
+wall <<'ENDWALL'
+Error: Out of cheese
+ENDWALL
+ftp ftp.secureftp-test.com <<'ENDFTP'
+test
+test
+ls
+ENDFTP
+END2
+ENDSSH
+
+
+#get your wan ip address
+dig +short myip.opendns.com @resolver1.opendns.com
+
+#ssh escape character is ~. ~s on  a remote session gives a lot of info about the session

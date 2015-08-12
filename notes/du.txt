@@ -1,0 +1,16 @@
+du : estimate the file space usage for a directory and ts subdirectories recursively
+-a : include the files also
+-B SIZE : print the size of usage in K,M,G etc
+-c : produce the grand total
+-d NUM : limit the output for files that are at depth not greater than NUM 
+-h : print the size in human readable form
+-s : do include sizes of subdirectories
+--time : show last modification time
+--time=WORD : show time as WORD instead of modification time: atime, access, use, ctime or status
+--time-style=STYLE : show times using style STYLE: full-iso, long-iso, iso, +FORMAT FORMAT is interpreted like 'date'
+-t SIZE : exclude entries smaller than SIZE if positive, or entries greater than SIZE if negative
+--exclude=PATTERN : exclude files that match PATTERN
+
+example:
+du -a --time=ctime
+du ~/Desktop/ -hd1

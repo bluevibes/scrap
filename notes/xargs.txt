@@ -1,0 +1,9 @@
+xargs :
+reads items from stdin and provides it as arguments for the command after it
+all the input items are separated by whitespaces by default
+by default all the items will be given to /bin/echo as default command
+
+-0 : input items are terminated by null characters instead of whitespaces. All characters are taken literally
+-a file : read input items from file instead of stdin
+-d delim : input items are terminated by delim instead of whitespaces. All characters are taken literally
+

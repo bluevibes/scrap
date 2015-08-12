@@ -1,0 +1,44 @@
+http://www.codeproject.com/Articles/31488/Makefiles-in-Linux-An-Overview
+
+make -f <somefile>	:	tells that <somefile should be used>
+
+make file preferences if nothing specified is a "makefile" then "Makefile"
+
+A make file consists of a set of targets, dependencies and rules.The makefile is read by make command which determines target files to be built by comparing the dates and times (timestamp) of source files in Dependency List. If any dependency has a changed timestamp since the last build make command will execute the rule associated with the target.
+
+target : dependency1 dependency2 . .
+	<cmd>
+
+If no argument is provided as a target then make will process only the first target and targets to which the 1st one do not depend, wont be processed. First target read determines how make must interpret all other targets. We must pass the main target explicitly to make or keep it at the top of all other targets.
+
+make command default behavior is to abort the processing when an error is detected while executing commands in rules.
+- b4 a cmd tells the make to ignore errors.
+@ Tells make not to print the command to standard output before executing.
+
+all is a phony target as it is not a file to be genrated from some targets but holds all the dependencies.
+
+
+macro can be constructed in a makefile as <MACRONAME>=<./cmd or flag or something>
+It can be accessed as $(MACRONAME) or ${MACRONAME}
+
+group commands using \
+
+suffix rules : for a particular kind of suffix, do something
+ext1(src).ext2(tgt):
+	cmd1
+	cmd2..
+
+so provide a file like file.ext2 as arg to make utility then it will run cmd(s) to generate file.ext2 from file.ext1
+special characters : 	$< represents current dependency---> here file.ext1
+			$* represents current dependency without the extension-----> here file
+			$@ represents current target ----> here file.ext2
+			$? represents list of current dependencies modified more recently than current target
+
+.SUFFIXES: .ext1 .ext  ---> tells that these ext will be used. Certains exts should be mentioned like this.
+
+
+each command in make is processed in different shells.
+to process all the commands in a single shell group them as (cmd1;cmd2;..)
+
+for large number of source files have makefiles for some small number of sources and call them from a separate makefile
+

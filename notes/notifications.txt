@@ -1,0 +1,27 @@
+1. ubuntu style notification : 
+notify-send -i <img icon> <message> #Standard icons @ /usr/share/icons/gnome/32x32/;/usr/share/notify-osd/icons/
+
+2. Print like in video games : 
+echo "GAME OVER" | osd_cat -A center -p middle -f -*-*-bold-*-*-*-72-120-*-*-*-*-*-* -cred -s 5 -O 2 -u yellow
+
+3. ubuntu style dialogue box : 
+zenity --title "Shutdown Comfirmation" --question --text  "Are you sure you want to shutdown?"
+
+4. old style dialogue box and capture output : 
+a=$(xmessage  "Are you sure you want to shutdown? " -buttons yes,no -print)
+echo $a
+
+5. kde style : refer https://mostlylinux.wordpress.com/bashscripting/kdialog/
+kdialog --title "Long process completed!" --passivepopup "This popup will disappear in 5 seconds" 5 &
+choice=$(kdialog --separate-output --checklist "CHOOSE ONE OR MORE COLORS:" 1 "RED" on 2  "YELLOW" off 3 "GREEN" off);
+choice=$(kdialog --combobox "CHOOSE A COLOR:" "RED" "YELLOW" "GREEN");
+kdialog --getexistingdirectory *
+kdialog --error "YOUR MESSAGE HERE" --title "YOUR TITLE HERE";
+kdialog --getopenfilename .
+variable=$(kdialog --inputbox "PLEASE ENTER TEXT")
+choice=$(kdialog --menu "CHOOSE ONE:" 1 "RED" 2 "YELLOW" 3 "GREEN");
+kdialog --msgbox "YOUR MESSAGE HERE" --title "YOUR TITLE HERE";
+kdialog --title "EXAMPLE" --passivepopup "MESSAGE" 5;
+variable=$(kdialog --password "PLEASE ENTER YOUR PASSWORD");
+progress=$(kdialog --progressbar "YOUR TEXT HERE" 4);
+

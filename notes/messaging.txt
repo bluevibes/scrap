@@ -1,0 +1,10 @@
+1. write USER [tty] : write to terminal of USER. If USER is logged in multiple times, then the terminal chosen is the first available recipient terminal from the output of who, which is a tty list.
+2. echo MESSAGE >/dev/pts/12 : writes directly to the pts #12
+3. echo MESSAGE | wall : takes input from STDIN and broadcasts it to all the terminals where users have mesg as y.
+4. explore talk
+
+auxillary cmds :
+mesg [y|n] : Control write access to your terminal by other users. This wont stop you from messaging yourself.
+tty : get terminal's input file name
+who : get the list of all the logged in users
+

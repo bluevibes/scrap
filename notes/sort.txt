@@ -1,0 +1,10 @@
+sort a stream from std input as 
+-b : ignore leading blanks
+-f : ignore case
+-r : reverse the order of sort
+-n : compare according to string numerical value
+-R : random hash sort
+-o FILE : write the results to FILE rather than stdout
+-c : check for sorted input reporting the first bad line and do not sort
+-C : check for sorted input silently and do not sort
+-t SEPARATOR : use SEPARATOR as the  field separator

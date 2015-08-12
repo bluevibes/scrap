@@ -1,0 +1,11 @@
+DOS is basically a file called command.com
+This contains certain built in commands - internal commands
+We can create batch files that can be classified as external commands.
+Batch file is executed in batch mode : where the command.com opens and reads a line from batch file, then closes it and executes the command for every line in batch file.
+Any command will be first searched in internal command's collection and then in the external commands.
+Remark : remark tool
+echo <string>: batch printing tool. without the string it shows whether echo is on or off. leave a line blank in bat to print blank line.
+echo off : prevent batch from displaying the commands benig executed
+@echo off : do not even display echo off
+pause : freeze time
+

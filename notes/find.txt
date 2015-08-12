@@ -1,0 +1,22 @@
+find <path> -name '<pattern>'               path=.,~,/etc     pattern=*.conf
+find <path> -type d/l/f
+find <path> -mtime <days(in integers)>			( use + for beyond/before and - for within)
+find <path> -mmin <minutes>                     	modified(m) in <minutes>
+find / -mtime +1					modified(m) before past day
+find -amin -60						accessed(a) within last <minutes>
+find -cnewer FILE					files whose status got changed after the modification of a specific FILE.
+find -anewer FILE					files which are accessed after modification of a specific FILE
+find <path> -newer <somefile for comparison>
+find <path> ! -newer <somefile for comparison>
+find <path> -perm 644
+find <path> -perm -u=r
+find <path> -size -1k
+find <path> -size +10M
+find -name "*.o" -exec rm "{}" ";"        {} represents file found
+find -iname "MyCProgram.c"    			ignore case
+find -mindepth 3 -maxdepth 5 -name passwd  	depth corresponding to the directory tree
+find -maxdepth 1 -not -iname "MyCProgram.c"   	inverting the search with not
+find ~ -empty
+find . -type f/d -name ".*" 			find hidden files/dirs
+find / -type f -name *.zip -size +100M -exec rm -i {} \;"
+

@@ -1,0 +1,54 @@
+chmod : this command sets the file modes or permissions
+chmod [ugoa][+-=][rwxXst]
+u : owner of the file
+g : users in group of the file
+o : users other than u and g
++ : add mentioned file modes from the existing file modes
+- : remove mentioned file modes from the existing file modes
+= : add the mentioned file modes and remove the unmentioned bits except that a directory's unmentioned set user and group ID bits are not affected.
+r : read file permission. For directory, list its content.
+w : write file permission. For directory, create and remove files in it.
+x : execute file permission. For directory, access given to the files in it.
+X : execute/search permission only if the file is a directory or already has this permission for some user.
+s : set user ID or group ID of the process generated when this file is executed
+t : set restricted deletion flag or sticky bit so that unauthorized users may not delete or rename the file
+
+A numeric mode is from one to four octal digits (0-7), derived by adding up the bits with values 4, 2, and 1. 
+Omitted digits are assumed to be leading zeros. 
+The first digit selects the set user ID (4) and set group ID (2) and restricted deletion or sticky (1) attributes. 
+The second digit selects permissions for the user who owns the file: read (4), write (2), and execute (1).
+The third selects permissions for other users in the file’s group, with the same values.
+The fourth for other users not in the file’s group, with the same values.
+Note : for symlinks the permissions cannot be changed. However the when chmod is used for it, the file pointed to by symlinks are modified.
+example : chmod 1700 somedirectory (where 1 = sticky bit)
+
+Options:
+-c : report only when changes are made
+-f, --silent, --quiet : suppress most error messages
+--reference=RFILE : use RFILE's mode instead of MODE values
+-R, --recursive : change files and directories recursively
+
+-----------------------------------------------------------
+chown : change the user and group ownership if a file
+If only an owner (a user name or numeric user ID) is given, that user is made the owner of each given file, and the files' group is not changed.
+If  the  owner is followed by a colon and a group name (or numeric group ID), with no spaces between them, the group ownership of the files is changed as well.  
+If a colon but no group name follows the user name, that user is made the owner of the files and the group of the files is changed to that user's login group.  
+If the colon and group are given, but the owner is omitted, only the group of the files is changed; in this case, chown performs the same function as chgrp.  
+If only a colon is given, or if the entire operand is empty, neither the owner nor the group is changed.
+
+Options : 
+-c, --changes : like verbose but report only when changes are made
+-f, --silent, --quiet : suppress most error messages
+-v, --verbose : output a diagnostic for every file processed
+--reference=RFILE : use RFILE's owner and group rather than specifying OWNER:GROUP values
+-R, --recursive : operate on files and directories recursively
+
+--------------------------------------------------------------
+chgrp : change the group ownership of the file
+
+Options : 
+-c, --changes : like verbose but report only when changes are made
+-f, --silent, --quiet : suppress most error messages
+-v, --verbose : output a diagnostic for every file processed
+--reference=RFILE : use RFILE's owner and group rather than specifying OWNER:GROUP values
+-R, --recursive : operate on files and directories recursively

@@ -1,0 +1,230 @@
+------
+|Bash|
+------
+-------------------------
+||Environment variables||
+
+Variables set by bash are in uppercase with few exceptions only
+PWD variable stores the path of shell's current working directory
+HOME variable stores pathname of the user's home directory
+PATH variable is storing the absolute path of bin directories so that the files inside can be referenced directly without the path
+
+-----------------------
+||Configuration files||
+
+bash sources certain settings when opened from files like - .bash_profile, .bashrc, .profile
+.bash_profile and .profile file (loaded by login shells) contains stuff that you want for the entire session on a login like programs that should run, variables that should be declared. .bash_profile sources .profile and .bashrc and if .bash_profile is not present then .profile is directly loaded.
+.bashrc (loaded by non-login/interactive/pseudo shells) contains configurations like aliases, functions, variables that are bash specific.
+Whenever a config file is changed it needs to be sourced into the current environment using source or . followed by config file  name.
+
+--------------
+||Parameters||
+
+Three types : 
+1. positional : command line args - accessed using $n
+2. special : set by shell - accessed using *, #, and _
+3. variables : environment variables and shell specific variables
+
+$n represents the nth parameter to the script. n if in double digits should be enclosed like {n}
+$@ returns the list of command line arguments with each argument enclosed within quotes
+$* returns the list of command line arguments with the entire list enclosed within quotes
+$# returns the number of arguments supplied to a script
+$0 is the full path of the script or the bash if no script is running
+$$ process identification number (PID) of the current process
+$! process identification number (PID) of the last background command
+$? holds the exit status of the last command
+$_ is set to last argument of the last executed command
+$- set to the option flag currently in effect
+
+-------
+||I/O||
+
+printf does not add new line at the end by default. Format string controls how the output is formatted. 
+echo adds a new line at the end of the arugments. The arguments are printed with exactly one space in between them.
+read reads an input until a new line is discovered. Reading into multiple arguments is done by extracting string separated by whitespaces. If there are more whitespaces than the arguments then last argument gets all the leftover strings.
+
+---------------
+||Redirection|| 
+
+CMD > FILE : redirect and overwrite the stdout of CMD to FILE. if FILE does not exist create it.
+CMD >> FILE : redirect and append the stdout of CMD to FILE. if FILE does not exist create it.
+2>FILE : redirect stderr to FILE. 0, 1 and 2 are file descriptors for stdin, stdout and stderr respectively.
+2>&1 : redirect std error to wherever stdout goes. No spaces allowed in between file descriptors and redirection operator. 
+&>FILE : redirect and overwrite both stdout and stderr to FILE
+&>>FILE : redirect and append both stdout and stderr to FILE. May not be supported by all terminals.
+CMD1<CMD2 : redirect the stdout of CMD2 as std input for CMD1
+CMD >> FILE 2>&1 OR CMD 2>&1 >> b : here two redirections are dependent, the order is important. The evaluation of channels or file descriptors for redirection happens from left to right. Different order would produce different behaviour.
+CMD < FILE1 > FILE2 : Run command with stdin from FILE1 and stdout to FILE2.
+/dev/null : aka bit bucket, discards any thing redirected to it.
+| (pipelines) directly connect the std output of one command directly to the std input of the other
+tee command passes on the input from std input to specified files and to the standard output
+
+------------------------
+||Command substitution||
+
+var=`CMD`             #old form originated in Bourne shell
+var=$( CMD )	      #newer version
+
+------------------
+||Conditionality||
+ 
+arithmetic : use test utility or [ .. ] or (( .. )). Use operators like -eq, -ne, -gte, -lt etc. Use -a/-o or &&/|| for and/or to combine multiple expressions.
+string : use test utility or [ .. ]. Use operators like ==/!=/\>/\<. Enclose the string variable within "". For expressions use [[ .. ]] and operator =~ to match strings with regular expressions.
+
+if <condition list>
+then
+  <list1>
+elif
+  <list2>
+else
+  <list3>
+fi
+
+case WORD in
+  PATTERN) COMMANDS ;;
+  PATTERN) COMMANDS ;; ## optional
+esac
+
+--------------
+||Iterations||
+
+while <list>               #while read line
+do                         #do
+  <code>                     #<code>
+done                       #done < FILE
+
+for var in <list>
+do
+  <code>		#Use break and continue similar to C logic in iterations.
+done
+
+until <condition>
+do
+  <code>
+done
+
+---------------------------
+||Multiline comment hacks||
+
+1. Here Documents : special purpose code block used to feed command list to an interactive command
+    VAR << COMMENT        #expansion can be used here  # the entire content of 'here-document is in $VAR'
+    here-document
+    COMMENT
+
+COMMENT here is a limit string. 
+use <<- to suppress leading tabs (not spaces) in the body of document when flushing it.
+By default, regular shell expansion occurs. To turn it off by quoting the limit sting with single/double quotes or escape it when using <<.
+    << "COMMENT"   or << 'COMMENT'    or << \COMMENT
+
+Use for documentation like follows :    # here, : is a bourne shell functions that does nothing
+    : << COMMENT
+    no commenting(#) required now
+    COMMENT
+
+Create file :
+    cat > file.txt << EOF
+    echo "wassup"
+    EOF
+    
+2. Not safe as ' will not be allowed in between code lines
+:'
+code1
+code2
+'
+
+-------------------
+||Shell expansion||
+ 
+With expansion, you type something and it is expanded into something else before the shell acts upon it.
+When expansion fails it does not give any error but uses the something as it is.
+
+1. Pathname Expansion/aka globbing
+
+[me@linuxbox me]$ echo D*
+Desktop Documents
+
+A subtle point about pathname expansion that is not often understood is that it is done by bash and not by the operating system or by the program that is being run. The program never sees the wildcards, bash substitutes the expansion into the command line before running the program. This is rarely important except when you're writing code and calling exec() and if you don't execute the program via bash any wildcards in the command line that you pass to exec() won't get expanded.
+
+But these are not the only forms of wildcards supported by bash. The other forms are referred to as extended globbing and you must enable them before you can use them:  $ shopt -s extglob
+
+2. Tilde Expansion
+
+[me@linuxbox me]$ echo ~
+/home/me
+
+3. Arithmetic Expansion
+
+Arithmetic expansion uses the form: $((expression))
+where expression is an arithmetic expression consisting of values and arithmetic operators.
+Arithmetic expansion only supports integers (whole numbers, no decimals), but can perform quite a number of different operations.
+
+[me@linuxbox me]$ echo $(((5**2) * 3))
+75
+
+4. Brace Expansion
+
+[me@linuxbox me]$ echo Front-{A,B,C}-Back
+Front-A-Back Front-B-Back Front-C-Back
+
+[me@linuxbox me]$ echo Number_{1..5}
+Number_1 Number_2 Number_3 Number_4 Number_5
+
+5. Parameter Expansion
+
+[me@linuxbox me]$ echo $USER
+me
+
+6. Command Substitution
+
+[me@linuxbox me]$ ls -l `which cp`
+-rwxr-xr-x 1 root root 71516 2007-12-05 08:58 /bin/cp
+
+7. Double Quotes
+Quoting is used to preserve the literal meaning of special characters.
+If you place text inside double quotes, all the special characters used by the shell lose their special meaning and are treated as ordinary characters. The exceptions are double quotes, “$”, “\” (backslash), and “`” (back- quote). This means that word-splitting, pathname expansion, tilde expansion, and brace expansion are suppressed, but parameter expansion, arithmetic expansion, and command substitution are still carried out.
+
+8. Single Quotes
+
+Single quotes preserve the literal meaning of everything except single quotes.
+If you need to suppress all expansions, you use single quotes.
+A single quote may not occur between single quotes, even when preceded by a backslash.
+
+9. Escaping Characters
+
+A backslash (\) simply stops the shell from thinking that certain characters are special. In the example above, it was used to print literally the doublequote character.
+
+-------------------
+||Square brackets||
+
+The single bracket [ is actually an alias for the test command, it's not syntax.
+
+One of the downsides (of many) of the single bracket is that if one or more of the operands it is trying to evaluate return an empty string, it will complain that it was expecting two operands (binary). This is why you see people do [ "x$foo" = "x$blah" ], the x guarantees that the operand will never evaluate to an empty string.
+
+The double bracket [[ ]], on the other hand, is syntax and is much more capable than [ ]. It does not have the single operand issue and it also allows for more C-like syntax with >, <, >=, <=, !=, ==, &&, || operators.
+
+For example, you can write [[ $x = foo && $y = bar ]] because the entire conditional expression is parsed by the shell, whereas [ $x = foo && $y = bar ] would first be split into two commands [ $x = foo and $y = bar ] separated by the && operator. Double brackets were first introduced in ksh and are only available in ksh, bash and zsh.
+
+Inside single brackets, you need to use double quotes around variable substitutions, like in most other places, because they're just arguments to a command (which happens to be the [ command). Inside double brackets, you don't need double quotes, because the shell doesn't do word splitting or globbing: it's parsing a conditional expression, not a command.
+
+----------------------
+||Standard wildcards||
+
+also known as globbing patterns are used by various command-line utilities to work with multiple files. 
+
+? (question mark) : represent any single character. If you specified something at the command line like "hd?" GNU/Linux would look for hda, hdb, hdc and every other letter/number between a-z, 0-9.
+
+* (asterisk) : this can represent any number of characters (including zero, in other words, zero or more characters). If you specified a "cd*" it would use "cda", "cdrom", "cdrecord" and anything that starts with “cd” also including “cd” itself. "m*l" could by mill, mull, ml, and anything that starts with an m and ends with an l.
+
+[ ] (square brackets) : specifies a range. If you did m[a,o,u]m it can become: mam, mum, mom if you did: m[a-d]m it can become anything that starts and ends with m and has any character a to d inbetween. For example, these would work: mam, mbm, mcm, mdm. This kind of wildcard specifies an “or” relationship (you only need one to match).
+
+{ } (curly brackets) : terms are separated by commas and each term must be the name of something or a wildcard. This wildcard will copy anything that matches either wildcard(s), or exact name(s) (an “or” relationship, one or the other).
+
+    For example, this would be valid:
+
+    cp {*.doc,*.pdf} ~
+
+    This will copy anything ending with .doc or .pdf to the users home directory. Note that spaces are not allowed after the commas (or anywhere else).
+
+[!] : This construct is similar to the [ ] construct, except rather than matching any characters inside the brackets, it'll match any character, as long as it is not listed between the [ and ]. This is a logical NOT. For example rm myfile[!9] will remove all myfiles* (ie. myfiles1, myfiles2 etc) but won't remove a file with the number 9 anywhere within it's name.
+
+\ (backslash) : is used as an "escape" character, i.e. to protect a subsequent special character. Thus, "\\” searches for a backslash. Note you may need to use quotation marks and backslash(es).

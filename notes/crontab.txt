@@ -1,0 +1,73 @@
+crontab : (cron table) a program/file that maintains a table of recurring actions
+cron    : name for the service that runs scheduled actions
+crond   : a daemon that runs in the background and reads the crontab file
+
+Commands :
+crontab [-u <username>] -e   : edit the crontab entries for current user(username skipped for the current user)
+crontab [-u <username>] -l   : list the crontab entries for current user
+crontab [-u <username>] -r   : remove a crontab file
+crontab [-u <username>] FILE : install crons as listed in the file
+
+Tips :
+Cron scheduling cannot happen for a particular second. 
+When cron job is run from a user's crontab it is executed as that user even if he is not logged in.
+Cron invokes the command from the user’s HOME directory with the shell and supplies all default environment variables.
+A user should have an entry in both /etc/passwd and /etc/shadow to run operational cronjobs
+Crontab entries are stored in /var/spool/cron/crontabs/<user>. Resist the temptation of editing directly.
+Crontab will give error for an incorrect syntax used before installing the changes
+By default a cron job will send an email to the local email account. Add >/dev/null 2>&1 to the end to disable that.
+Logs of editing crontab and job execution are in /var/log/syslog. This can be tweaked in /etc/rsyslog.d/50-default.conf
+Cron service need not be restarted to load crontabs on modifications. New crons are automatically loaded when the file is modified.
+
+Crontab variable : 
+PATH=/usr/local/bin:/usr/bin #add files from these paths now relatively (no absolute path needed for files under these paths)
+MAILTO="<user>" OR "" OR "<mailid>" #mention where/who to send the mail
+SHELL=/bin/bash #define the shell to be used. default is /bin/sh
+HOME=/ #the cron will be run with this as HOME now
+LOGNAME=user's login id
+
+Crontab format : MIN HOUR DOM MON DOW COMMAND #no user specified here
+MIN     : 0-59
+HOUR    : 0-23
+MON     : 1-12
+DOM     : 1-31
+DOW     : 0-7 (0 and 7 for sun) or mon/tue/wed/thu/fri/sat/sun (in any lettercase)
+COMMAND : script/command. Provide the paths absolutely. May not contain %, escape it.
+
+Operators for the crontab values : 
+* : all possible values of that field. 
+, : a list of values separated by commas that are applicable for the cron
+- : a range of values. like 30-59 implies 30,31,32.....58,59
+/ : defines a step value. like 0-59/5 says that for every 5th minute in the hour.
+
+Special placeholder for time :
+@reboot <command> #Runs at boot
+@yearly <command> #Runs once a year [0 0 1 1 *]
+@annually <command> #Runs once a year [0 0 1 1 *]
+@monthly <command> #Runs once a month [0 0 1 * *]
+@weekly <command> #Runs once a week [0 0 * * 0]
+@daily <command> #Runs once a day [0 0 * * *]
+@midnight <command> #Runs once a day [0 0 * * *]
+@hourly <command> #Runs once an hour [0 * * * *]
+
+Cron files and directories:
+/etc/cron.allow   : add a username per line to this file to allow him to use crontabs. If this file exists then cron.deny is ignored. If this file exists and user should be listed in it to be allowed to use cron. If this file doesn't exit then cron.deny is looked for.
+/etc/cron.deny    : add a username per line to this file to deny him crontab service. If this file exists and is empty, then all users can use crontab. If the file does not exist only root user can use crontab (in ubuntu all users are allowed). The users is not mentioned in cron.deny can use crontab. Caveat : the above access control is implemented by crontab and not cron. So if a user does not have crontab access but cronjobs are set on his name, then cron will blindly run the job. Again, allowing a user to run crons will not enable the already present cronjobs of of the user without a resave.
+/etc/crontab      : this is the cronjob file for system wide jobs. Format : MIN HOUR DOM MON DOW USER COMMAND
+/etc/cron.d/      : put all scripts here and call them from /etc/crontab file
+
+Following directories use run-parts mechanism and it is very choosy about files, eg: a file with extension wont be run. Check if the script will run or not by running : run-parts --test /etc/cron.hourly
+/etc/cron.hourly  : add a script here that will run hourly by root
+/etc/cron.daily   : add a script here that will run daily by root
+/etc/cron.weekly  : add a script here that will run weeky by root
+/etc/cron.monthly : add a script here that will run monthly by root
+
+Examples :
+00 11,16 * * * CMD #run at 1100 and 1600 hrs every day. For multiple values in the same field separate them with commas.
+45/2 09-18 * * 1-5 CMD #run the command every 2nd minute of 1st 45 min of every hour between 9 am to 6 pm of the weekdays.
+00 0-23/2 02 07 * CMD #runs every other hour on the 2nd of July
+@daily <command_01> && <command_02> #run multiple commands every day using ampersand. Here a preceeding command should run successfuly for the next to run.
+@daily <command_01>;<command_02> #run multiple commands subsequently every day using ;. Here all commands run irrespective of their exit status.
+(crontab -l ; echo "0 * * * * COMMAND") 2>&1 | grep -v "no crontab" | sort | uniq | crontab - #add cron in single command
+crontab -l 2>&1 | grep -v "no crontab" | grep -v COMMAND |  sort | uniq | crontab - #remove cron in single command
+crontab -l > FILE ; echo "* * * * * COMMAND" >> FILE ; crontab FILE ; rm -f FILE #install cron from file

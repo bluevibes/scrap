@@ -1,0 +1,21 @@
+( Expr ) : test if its true
+( ! Expr ) : test if its false
+EXP1 -a EXP2 : both EXP1 and EXP2 are true
+EXP1 -o EXP2 : either EXP1 or EXP2 is true
+INT1 -eq INT2 : INT1 is equal to INT2
+INT1 -ge INT2 : INT1 is greater than or equal to INT2
+INT1 -gt INT2 : INT1 is greater than INT2
+INT1 -le INT2 : INT1 is less than or equal to INT2
+INT1 -lt INT2 : INT1 is less than INT2
+INT1 -ne INT2 : INT1 is not equal to INT2
+-n string : test non zero length(n is the length)
+-z string : test zero length
+-d file : exists and is a directory
+-s file : size gt zero
+-r file : exists and readable 
+-w file : exists and writable
+-x file : exists and executable
+-f file : exits and is a regular file
+-e file : file exists
+string1 == string2 (dont use -eq -ne .. for strings)
+

@@ -1,0 +1,18 @@
+ssh
+awk
+sed
+gzip
+top
+curl
+wget
+iptables
+
+||backup script||
+checks for files uncommon in both desktop and HD710 and prompts user for actions - 
+copy from either side - all or some prompt
+delete from either side (make sure it is protected) - all or some prompt
+do nothing
+
+with a button's press we need to automate the procedure that otherwise take precious human hours
+
+|| study how a project looked like at its early stages

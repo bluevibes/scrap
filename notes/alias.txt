@@ -1,0 +1,15 @@
+use alias to create alias of big commands to small like : alias <somethingbigasacommandanditsargumetns>=<somethingtiny>
+alias set from the terminal will be set only for that terminal. 
+Shell functions are faster. Aliases are looked up after functions and thus resolving is slower.
+To make changes permanent add, the alias c='clear' to .bashrc
+temporarily escape an alias using \<alias> and "<alias>"
+ 
+alias : list all the aliases 
+alias c='clear' : set an alias
+unalias c : unset an alias
+unalias -a : remove all aliases 
+
+	example : alias cd..='cd ..'
+	example : alias ..='cd ..'
+
+

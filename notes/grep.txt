@@ -1,0 +1,24 @@
+globally regular expression print
+-n = print the line number from the matched file in the result(grep -n <str> file)
+-v = print the negative result/complement of what was matched 
+-c = print just the number of lines that were matched in the query
+-l = print the names of the files that contains the word (grep -l <string> *)
+-L = print the names of the files that don't match the string (opp of -l)
+-i = make the search case insensitive
+-o = only matched part is displayed and display on separate lines
+-x = print if the the string matches with the entire line
+-q = print nothing to stdout. exit with 0 status if match found else with 1
+-G = for basic regular expression
+-E = for extended regular expressions
+-H = the output lines with filename(default in case of multiple file input)
+-h = suppress the filename in the o/p lines(default in case of single file input)
+-A = followed by num that denotes the number of lines after a match to be printed
+-B = followed by num that denotes the number of lines before the match 
+-C = same as -AB
+-r = read all files under each dir.dont follow symbolic links
+-R = -r + read the symbolic links
+-w = search for exact word and not for substring
+-b = offset in terms of bytes is displayed from the file' beginning
+-e = matching multiple terms
+
+example : grep -rl "somestring" <path>  # search for the somestring in evry path under path

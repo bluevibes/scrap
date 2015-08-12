@@ -1,0 +1,35 @@
+/etc/sudoers file stores all the information for locking down access and privileges to resources.
+Any configuration below will overwrite configuration above it. So add the changes to the end of the file.
+sudo actions are logged : "grep 'sudo:' /var/log/*" to get the logfile 
+editing sudoers should be done using visudo command
+
+Defaults:
+  listing default settings : sudo -l
+  Timestamps:
+    set default timeout for users to use sudo without password : Defaults:ALL timestamp_timeout=15
+    reset active timestamp : sudo -k
+  Environments:
+    env_reset
+
+Giving users privileges:
+  USER HOST=(RUNAS) [NOPASSWD:|PASSWD:|NOEXEC:]COMMANDS
+    USER     : username to which grant permissions.
+    HOST     : comma separated list of hostnames. ip addresses/hostname for which this entry is applicable. ALL is mostly used in its place.
+    RUNAS    : comma separated list of usernames. USER can run as any of the RUNAS. Left empty usually that defaults to root.
+    COMMANDS : comma separated list of commands. USER can only run these COMMANDS.
+    NOPASSWD : user wont be prompted for a password when sudoing. Default is PASSWD.
+    NOEXEC   : prevents programs listed in COMMANDS from shelling out. Example of shelling out : vim allows users to run a bash COMMAND with :!COMMAND
+    example1 : <operator ALL= /sbin/poweroff>. Here ALL is similar to * in regex.
+    example2 : <ray ALL = (root, bin : operator, system) /bin/ls, /bin/kill>. Ray is allowed to run /bin/ls and /bin/kill as root/bin, possibly with additional operator or system groups privileges.
+
+Giving groups privileges:
+  %GROUP HOST=(USERS) [NOPASSWD:|PASSWD:]COMMANDS
+    GROUP    : groupname to which this applies
+    
+Aliases:
+  User_Alias     techs   = dick, harry
+  Runas_Alias    admins  = root, operator
+  Host_Alias     office  = 11.7.22.0/255.255.255.0
+  Cmnd_Alias     install = /usr/bin/apt-get, /usr/bin/yum, /usr/bin/pip, /usr/bin/easy-install
+  
+  These aliases can replace the usual names.

@@ -26,6 +26,7 @@ watch : run a command again after some time interval to see how things change
 less : allows users to view a file wth searching and scrolling in both direction
 split : split an input files into multiple files. eg: split FILE -l 50 ---> split FILE into files with 50 lines in each output file
 lsof : list open files
+getent : get entries from Name Service Switch libraries
 
 TIPS
 ----

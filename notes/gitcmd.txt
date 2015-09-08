@@ -153,6 +153,7 @@ OPT = -D : delete the pointer BRANCH anyways. Data is not removed.
 OPT = -u : BRANCH is of form REMOTE-NAME/BRANCH. Used to change upstream branch for BRANCH.
 OPT = -m OLD_BRANCH NEW_BRANCH: rename the OLD_BRANCH as NEW_BRANCH. If OLD_BRANCH is not specified, current branch is used.
 OPT = -r : remove/list the remote tracking branch
+OPT = --contains COMMIT-ID : list the branches in which the commit is. 
 
 <git merge [OPT] BRANCH>
 w/o OPT : BRANCH is merged with the current branch.

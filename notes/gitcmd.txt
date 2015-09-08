@@ -157,15 +157,25 @@ OPT = --contains COMMIT-ID : list the branches in which the commit is.
 
 <git merge [OPT] BRANCH>
 w/o OPT : BRANCH is merged with the current branch.
-OPT = --ff-only : only fast forward merges are done
+OPT = --ff-only : only fast forward merges are done. This does not accept true commits.
 OPT = --abort : revert back to your state before you ran the merge
 OPT = -Xignore-all-space or -Xignore-space-change 
 OPT = --squash BRANCH : add changes from BRANCH that are not in current branch by merging and stage them. Changes wont be commited.
 
 <git rebase [BASEBRANCH] TOPICBRANCH>
 rebase TOPICBRANCH with the BASEBRANCH. If no BASEBRANCH provided then current branch is taken as base.
-OPT = i : interactive
-Perils of rebasing can be negated by others by doing pull with a rebase or fetch followed by rebase.
+OPT = -i COMMIT-ID : rebase the current branch over the COMMIT-ID. You get a list of commits in chronological order. This allows following operations :
+# Commands:
+#  p, pick = use commit
+#  r, reword = use commit, but edit the commit message
+#  e, edit = use commit, but stop for amending
+#  s, squash = use commit, but meld into previous commit
+#  f, fixup = like "squash", but discard this commit's log message
+#  x, exec = run command (the rest of the line) using shell
+#
+# These lines can be re-ordered; they are executed from top to bottom.
+# If you remove a line here THAT COMMIT WILL BE LOST.
+# However, if you remove everything, the rebase will be aborted.
 
 <git cherry-pick COMMIT-ID>
 apply the patch introduced in the due to COMMIT-ID to the current branch.
@@ -186,7 +196,12 @@ OPT = branch BRANCH : creates a new BRANCH on the current branch as base, applie
 
 <git clean OPT>
 w/o OPT : remove untracked files from the working directory
-OPT = -f : forcefully, OPT = -i : interactive, OPT = -d : remove directories as well, OPT = -n : dry-run only, OPT = -x : remove ignored files as well, OPT = -X, remove ignored files only
+OPT = -f : forcefully
+OPT = -i : interactive
+OPT = -d : remove directories as well
+OPT = -n : dry-run only
+OPT = -x : remove ignored files as well
+OPT = -X, remove ignored files only
 
 <git remote OPT>
 w/o OPT : lists the aliases of each remote handle (server)

@@ -206,34 +206,27 @@ Checking out a branch adds its latest snapshot's content to the staging area and
 Git has a pointer HEAD that points to the current local branch. Different branches stay isolated.
 
 Merging :
-If BRANCH is merged into master/or any other branch, two cases arise :
-1. BRANCH is direct upstream of the merge history.There is no divergence to be merged. So master now points to the latest commit pointed to by BRANCH. This is called fast-forward merge.
-2. BRANCH's commit is not direct successor of the master's commit. The development history is different. A three way merge is made by using the pointers of two branches to their latest commits and their common ancestor (first common best merge base) by traversing in reverse direction. Git does the merge on its own, using recursive strategy. A new commit is created in this case (pointed to by the master) that has merged the files from the two branches. Git takes the branch that is more similar to the common merge base and creates a new tree pointing to it and the other branch, with the contents of current branch it adds the files from the other branch that are not already in this branch and creates a new commit for this tree.
+git merge THIS_BRANCH INTO_THIS_BRANCH. If INTO_THIS_BRANCH is not specified, current branch is used. Two cases arise in this case :
+1. aka fast-forward merge. THIS_BRANCH is direct upstream of INTO_THIS_BRANCH. There is no divergence and INTO_THIS_BRANCH points to the same commit as THIS_BRANCH.
+2. aka three way merge. THIS_BRANCH is not direct successor of INTO_THIS_BRANCH. The development history is different. A three way merge is made by using the pointers of two branches to their latest commits and their common ancestor (first common best merge base) by traversing in reverse direction. Merging takes the endpoints and merges them together into a true commit. Git merges using recursive strategy. 
 
-Merges may result in conflict if the same hunk of the same file in two branches are changed. Git status shows the files that are unmerged. These files contain standard resolution markers/conflict. 
-Git also maintain three files/stages of the file in conflict. ":1:<file>", ":2:<file>" and ":3:<file>" are respectively common, ours and theirs versions of file.
+Rebasing :
+git rebase THIS_BRANCH INTO_THIS_BRANCH. If INTO_THIS_BRANCH is not specified, current branch is used.
+It works by going to the common ancestor of the two branches, getting the diffs introduced by each commit of the INTO_THIS_BRANCH, saving those diffs to temporary files, resetting the INTO_THIS_BRANCH to point to the commit pointed to by THIS_BRANCH and applying the diffs of each commit from temporary file on top of INTO_THIS_BRANCH. THIS_BRANCH is never moved. Rebasing replays changes from one line of work onto another in the order they were introduced
 
-Resolution markers are of form : 
+Comparison : 
+1. Merging gives one additional commit over the existing commits, called true commit. Rebasing recommits commit from INTO_THIS_BRANCH.
+2. Merges are non-destructive operations. Existing branches are only tied together. However, rebases can make you lose the existing commits to the new commits.
+3. Merges make the history cumbersome to understand. In rebase, the history remains linear and easy to perceive.
+4. Use merge when the combining two branches that are both changed by multiple contributers. Use rebase when combining branch A into B, where only B has single contributer. This will ensure that other developers dont get a hodgepodge in their history.
+
+Merges/Rebases may result in conflict if the same hunk of the same file in two branches are changed. Git status shows the files that are source of conflicts. These files contain standard resolution markers/conflict. Git also maintain three files/stages of the file in conflict. ":1:<file>", ":2:<file>" and ":3:<file>" are respectively common, ours and theirs versions of file. Resolution markers are of form : 
         <<<<<<< HEAD:<file>     #This marks the beginning of the conflict found
         .                       #This part comes from the branch pointed by HEAD
         =======                 #Above and below are two versions of the same file from different branches
         *                       #This part comes from BRANCH
         >>>>>>> BRANCH:<file>   #This marks the end of conflict
-
-The merging should be so that either of the two parts or a manual mix of the two should be made. The resolution markers should be removed and once all the conflicts have been resolved, the files should staged and committed to complete the merge.
-Merges can be made be using graphical tools by running <git mergetool> and selecting the appropriate tool.
-
-Rebasing :
-git rebase branch1 branch2
-It works by going to the common ancestor of the two branches, getting the diff introduced by each commit of the branch2, saving those diffs to temporary files, resetting the branch2 to point to the commit pointed to by branch1 and applying the diffs of each commit from temporary file on top of branch2. branch1 is never moved. if branch2 is not specified, current branch is taken.
-
-Difference from merge : For two diverged branches, in merge the other branch's changes are applied on top of the current/specified branch. Eg: git merge origin/master will take the additional commits from origin/master and apply them to master and create a merge commit. However, in rebasing the rebase method is followed and the history will have the other branch's commit first and then current branches commit are applied on top of it. The order of commits is reversed as compared to merge.
-
-Rebasing replays changes from one line of work onto another in the order they were introduced, whereas merging takes the endpoints and merges them together. No difference in the end product after the integration occurs in either of two methods.
-Two differences otherwise :
-1) rebasing gives a more linear and cleaner history than merging. Rebasing tampers with the history.
-2) current branch in merge points to the merged commit while that in rebasing it is not updated to the rebased commit.
-Rule --> Do not rebase commits that exist outside your repository otherwise other repositories would have two histories : one of the auto merges from the pull and other of the rebase from your side. In such a case, others would need to rebase while pulling.
+The resolution markers should be removed and once all the conflicts have been resolved, the files should be committed to complete the merge or continue the rebase.
 
 -----------------------
 ||Remote repositories||
@@ -281,7 +274,7 @@ Using reset to move HEAD and the branch pointer point to the other commit :
 3) Hard reset : move the HEAD to target/some commit then update to index and make the working directory look like the index. Resetting hard will erase the working directory's contents.
 
 Use cases :
-One can thus squash multiple commits into single a commit.
+1. One can thus squash multiple commits into single a commit. use <git rebase -i COMMIT-ID> or <git reset COMMIT-ID --soft> or <git merge --squash>.
 Selectively remove certain changes that are not desired.
 
 Fact : 

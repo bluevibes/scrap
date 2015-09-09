@@ -116,6 +116,9 @@ shows details of commit for COMMITID( hex format).
 If COMMITID not specified then the recent commit's details are shown.
 OPT = --name-only : list the files out that were changed in that commit.
 
+<git show COMMIT-ID:FILE-PATH>
+shows the version of file during that COMMIT-ID
+
 <git reset OPT HEAD~n/HASH>
 If the HASH is known then we can reset to any valid commit(forward/backward).
 OPT = --soft : move pointer of branch reference n commits back in the repository

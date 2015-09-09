@@ -245,6 +245,14 @@ OPT = TAGNAME [COMMITID] : create a lightweight tag
 <git reflog>
 stores the logs of where and what the actions performed (clone/commit/pull etc) on references.
 
+<git gc>
+cleanup repository by garbage collection and optimizes it
+--prune=DATE : prune loose objects prior to the give DATE. Use now to clean all.
+
+<git fsck>
+verifies connectivity and validity of objects
+--unreachable : list the unreachable objects
+
 <git archive BRANCH>
 create an archive from a named tree (BRANCH)
 
@@ -295,9 +303,6 @@ Multiple refs may point to same/different commits and hence give us the notion o
 
 <git symbolic-ref HEAD>
 gives the reference to which the symblic reference HEAD points to.
-
-<git gc>
-compress the content of the files with zlib and create pack files
 
 <git verify-pack>
 see what was packed

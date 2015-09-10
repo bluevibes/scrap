@@ -1,0 +1,108 @@
+
+------------------------------
+|| INTRODUCTION TO IPTABLES ||
+------------------------------
+
+Iptables is an interface to the netfilter firewall built-in to the linux kernel.
+Iptables might contain multiple tables. There is a map that defines order of traversing through the tables. 
+Tables might contain multiple chains. Chains can be built-in or user-defined. 
+Chains might contain multiple rules. Rules are defined for the packets.
+
+Application of rules :
+1. Packet filters through a chain of rule until it matches.
+2. On a match, operation will be accordingly performed otherwise default policy is applied.
+3. Since the first match wins, the order of rules in the chain is very important to ensure correct behaviour.
+
+Iptable targets :
+1. ACCEPT : let the packet through	
+2. DROP   : drop packet quietly
+3. RETURN : stop executing the next set of rules in the current chain for this packet. The control will be returned to the calling chain.
+4. QUEUE  : pass the packet to the userspace.
+
+5 built-in tables :
+    1. Filter Table
+    Filter is default table for iptables. Has the following built-in chains.
+        1> INPUT chain – Incoming to firewall. Use -i with this for network interface.
+        2> OUTPUT chain – Outgoing from firewall. Use -o with this for network interface.
+        3> FORWARD chain – Packet for another NIC on the local server. For packets routed through the local server.
+
+    2. NAT table
+    Iptable’s NAT table has the following built-in chains.
+        1> PREROUTING chain – translate the destination ip address of the packets to something that matches the routing on the local server when coming to the system and before routing ( for DNAT or destination NAT).
+        2> POSTROUTING chain – translate the source ip address of the packets to something that might match the routing on the desintation server when leaving the system ( for SNAT source NAT ).
+        3> OUTPUT chain – NAT for locally generated packets on the firewall.
+
+    3. Mangle table
+    Iptables’s Mangle table is for specialized packet alteration. This alters QOS bits in the TCP header. Mangle table has the following built-in chains - PREROUTING, OUTPUT, FORWARD, INPUT and POSTROUTING
+
+    4. Raw table
+    Iptable’s Raw table is for configuration excemptions. Raw table has the following built-in chains - PREROUTING and OUTPUT chain.
+
+    5. Security table
+    Used for MAC networking rules. It has the following built-in chains - OUTPUT, FORWARD and INPUT chains.
+
+Note :
+If something is not specified, then default nature is to apply the rule to all such cases.
+Use regex to do more in with less
+On system reboot, CLI changes will be lost. Save and restore them.
+
+
+--------------------
+|| USING IPTABLES ||
+--------------------
+
+# Auxiliary command :
+# 1. iptables-save — dump iptables rules to stdout. Redirect to a file.
+# 2. iptables-restore. Redirect from a file.
+# 3. iptables-apply
+
+# Setting default policy - which are usually defaulted to ACCEPT if not specified explicitly
+iptables --policy INPUT DROP # Default deny all incoming packets not matched 
+iptables --policy OUTPUT ACCEPT # Default accept all outgoing packets not matched
+iptables --policy FORWARD DROP # Default deny all forwarding packets not matched
+
+# Working with rules
+FLUSH   : iptables -F <chain>
+LIST    : iptables -t nat -L                                                          # for table nat
+DELETE  : iptables -D <chain> 5                                                       # 5th position rule in nat table
+          iptables -D <chain> -i <interface> -p <protocol> --dport <port> -j <target> # based on what they do
+APPEND  : iptables -A <chain> -i <interface> -p <protocol> --dport <port> -j <target>
+INSERT  : iptables -I <chain> 3 -p <protocol> --dport <port> -j <target>              # insert before third rule (if not given defaults to 1)
+REPLACE : iptables -R <chain> 1 -p <protocol> -s <source cidr> --dport <port> -j <target>
+
+# Spoofed addresses, reject these.
+CLASS_A='10.0.0.0/8'
+CLASS_B='172.16.0.0/12'
+CLASS_C='192.168.0.0/16'
+CLASS_D_MULTICAST='224.0.0.0/4'
+CLASS_E_RESERVED='240.0.0.0/5'
+iptables -A INPUT -i eth0 -s 127.0.0.0/8 -j DROP # packets that have ip in loopback address range
+iptables -A INPUT -i eth0 -s $OWN_IP_ADDRESS -j DROP # this forms a cyclical loop
+
+# Optimisations
+# 1. Place loopback rules early.
+iptables -A INPUT -i lo -j ACCEPT #accept incoming loopback packets
+iptables -A OUTPUT -o lo -j ACCEPT #accept incoming loopback packets
+# 2. Place forwarding rules early
+# 3. Use state and connection tracking modules to bypass the firewall for established connections. State table records and maintains the connections.
+iptables -I INPUT -m state -state ESTABLISHED,RELATED -j ACCEPT
+iptables -I OUTPUT -m state -state ESTABLISHED,RELATED -j ACCEPT
+# 4. Place specific rules at the top
+# 5. Place generic rules at the bottom
+# 6. Be more descriptive about the rule, as specify the criteria completely.
+
+# Examples
+iptables -I INPUT -i eth0 -p tcp -s 0/0 --dport 21 -j DROP # reject all ftp requests
+iptables -I INPUT -i eth0 -p tcp -s 192.168.0.15/24 --dport 22 -j ACCEPT # accept inbound ssh from the subnet only
+iptables -I OUTPUT -o eth0 -p udp --dport 67:68 --sport 67:68 -j ACCEPT # allow dhcp requests
+iptables -A OUTPUT -o eth0 -p udp -dport 53 -j ACCEPT # outbound dns lookups
+iptables -A OUTPUT -o eth0 -p udp -dport 123 --sport 123 -j ACCEPT # outbound NTP requests
+iptables -A OUTPUT -p tcp --syn -m multiport --dport 80,443 -m connlimit --connlimit-above 10 -j REJECT --reject-with-tcp-reset # Reject more than 10 requests
+# Allow ICMP pings for those other than repeats
+iptables -I INPUT -i eth0 -p icmp --icmp-type 8 -s 0/0 -d $SERVER_IP -m state -state NEW,ESTABLISHED,RELATED -j ACCEPT #icmp type 8 is for echo request
+iptables -I OUTPUT -o eth0 -p icmp --icmp-type 0 -s 0/0 -d $SERVER_IP -m state -state NEW,ESTABLISHED,RELATED -j ACCEPT #icmp type 0 is for echo reply
+# Dont allow a particular site
+# 1. Use dig or host to find the ip of www.xyz.com
+# 2. Use whois to get the net range for that ip
+# 3. For an iptables rule for that subnet or range of ips
+iptables -A OUTPUT -p tcp -m multiport --dport https,https -m time --timestart 14:00 --timestop 12:00 -d SUBNET_FOR_XWZ -j DROP

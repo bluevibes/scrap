@@ -1,3 +1,16 @@
+Generate a key :
+ssh-keygen 
+
+Copy your public key to another host so that you need not provide password again :
+ssh-copy-id -i IDENTITY_FILE HOSTNAME
+
+Get randomart images for hosts :
+ssh-keygen  -lvf .ssh/known_hosts
+
+-------------------------------
+|| RUNNING COMMANDS REMOTELY ||
+-------------------------------
+
 #positional parameters
 myparameter=foobar
 ssh user@server "myscript $myparameter"

@@ -1,0 +1,201 @@
+---------------------------
+|| INTRODUCTION TO MONIT ||
+---------------------------
+Monit is a free open source and very useful tool that automatically monitors and manages server process, files, directories, checksums, permissions, filesystems and services like Apache, Nginx, MySQL, FTP, SSH, Sendmail and so on in a UNIX/Linux based systems and provides an excellent and helpful monitoring functionality to system administrators.
+
+Monit has a ability to start a process if it is not running, restart a process if not responding and stop a process if uses high resources. Additionally you can also use Monit to Monitor files, directories and filesystems for changes, checksum changes, file size changes or timestamp changes. With Monit you can monitor remote hosts TCP/IP port, server protocols and ping. Monit keeps its own log file and alerts about any critical error conditions and recovery status.
+
+----------------------------
+|| COMMAND LINE FOR MONIT ||
+----------------------------
+
+-c file
+  Use this control file
+
+-d n
+  Run Monit as a daemon once per n seconds. Or use "set
+  daemon" in monitrc.
+
+-g name
+  Set group name for start, stop, restart, monitor and
+  unmonitor action.
+
+-l logfile
+  Print log information to this file. Or use "set logfile"
+   in monitrc.
+
+-p pidfile
+  Use this lock file in daemon mode. Or use "set pidfile"
+   in monitrc.
+
+-s statefile
+  Write state information to this file. Or use "set
+  statefile" in monitrc.
+
+-I
+  Do not run in background (needed for run from init)
+
+-t
+  Run syntax check for the control file
+
+-v
+  Verbose mode, work noisy (diagnostic output)
+
+-----------------------
+|| CONFIGURING MONIT ||
+-----------------------
+It is prefered to do the configuration using a file. The main configuration file/control file of monit located at:
+1. Sytem wide : /etc/monit.conf (RedHat/CentOS/Fedora) and /etc/monit/monitrc (Ubuntu/Debian/Linux Mint).
+2. User wide : ~/.monitrc 
+
+After changing the conf file do following :
+a. Check syntax : monit -t
+b. Restart monit : 'monit start all' OR 'monit reload'
+
+1. Monit configurations
+By default, it is set up to check that services are running every 2 minutes and stores its log file in “/var/log/monit.log”.
+These settings can be altered at the beginning of the configuration file in the set daemon and set logfile lines respectively.
+
+The monit has user friendly web interface where you can directly view the system status and setup up processes using native HTTP(S) web server or via the command line interface. A web server like Apache or Nginx should be installed on your system to access and view monit web interface. You can control the programs through both the web interface or the command line. Following is the sample configuration block for this:
+
+set httpd port 2812 and     # port can be chaged to any other port
+     use address localhost  # only accept connection from localhost
+     allow localhost        # allow localhost to connect to the server and
+     allow admin:monit      # require user 'admin' with password 'monit'
+     allow @monit           # allow users of group 'monit' to connect (rw)
+     allow @users readonly  # allow users of group 'users' to connect readonly
+
+2. Monitor a service/file
+Following are a few the sample configuration block for this :
+
+######## NGINX
+
+check process nginx with pidfile /var/run/nginx.pid
+    start program = "/etc/init.d/nginx start"
+    stop program  = "/etc/init.d/nginx stop"
+    group www-data (for ubuntu, debian)
+
+######## HTTPD
+
+check process httpd with pidfile /var/run/httpd.pid
+    group apache
+    start program = "/etc/init.d/httpd start"
+    stop program = "/etc/init.d/httpd stop"
+    if failed host 127.0.0.1 port 80
+    protocol http then restart
+    if 5 restarts within 5 cycles then timeout
+
+######## SSHD
+
+check process sshd with pidfile /var/run/sshd.pid
+    start program "/etc/init.d/sshd start"
+    stop program "/etc/init.d/sshd stop"
+    if failed host 127.0.0.1 port 22 protocol ssh then restart
+    if 5 restarts within 5 cycles then timeout
+
+######## MYSQL
+
+check process mysql with pidfile /opt/mysql/data/myserver.mydomain.pid
+   group database
+   start program = "/etc/init.d/mysql start"
+   stop program = "/etc/init.d/mysql stop"
+   if failed host 192.168.1.1 port 3306 protocol mysql then restart
+   depends on mysql_bin
+   depends on mysql_rc
+
+check file mysql_bin with path /opt/mysql/bin/mysqld
+   group database
+   if failed checksum then unmonitor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+check file mysql_rc with path /etc/init.d/mysql
+   group database
+   if failed checksum then unmonitor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+######## CPU TEMPERATURE
+
+#Monitor CPU Temperature mbmon required
+check program CPU with path "/usr/local/etc/monit/scripts/cpu_temp.sh"
+   if status > 60 then alert
+   group temperature
+
+#Script /usr/local/etc/monit/scripts/cpu_temp.sh
+#!/bin/sh
+TP=`mbmon -c 1 -r | grep TEMP1 | awk '{ printf "%d",$3 }'`
+#echo $TP
+exit $TP
+#Note: Read about mbmon before use it. It can crash your system.
+
+#Here is another idea for gathering the CPU Temperature with coretemp rather than (x)mbmon:
+#Script /usr/local/etc/monit/scripts/cpu_temp_2.sh
+#!/bin/sh
+TP=`/sbin/sysctl -a | grep dev.cpu.0.temperature | awk '{print substr($2,0,2)}'`
+#echo $TP
+exit $TP
+#Note: Don't forget to load the kernel module coretemp 
+
+######## SAMBA
+
+check process smbd with pidfile /opt/samba2.2/var/locks/smbd.pid
+   group samba
+   start program = "/etc/init.d/smbd start"
+   stop  program = "/etc/init.d/smbd stop"
+   if failed host 192.168.1.1 port 139 type TCP  then restart
+   depends on smbd_bin
+
+check file smbd_bin with path /opt/samba2.2/sbin/smbd
+   group samba
+   if failed checksum then unmonitor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+######## POSTFIX
+
+check process postfix with pidfile /var/spool/postfix/pid/master.pid
+   group mail
+   start program = "/etc/init.d/postfix start"
+   stop  program = "/etc/init.d/postfix stop"
+   if failed port 25 protocol smtp then restart
+   depends on postfix_rc
+
+check file postfix_rc with path /etc/init.d/postfix
+   group mail
+   if failed checksum then unmonitor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+######## APACHE
+
+check process apache with pidfile /opt/apache_misc/logs/httpd.pid
+   group www
+   start program = "/etc/init.d/apache start"
+   stop  program = "/etc/init.d/apache stop"
+   if failed host localhost port 80 
+        protocol HTTP request "/~hauk/monit/token" then restart
+   if failed host 192.168.1.1 port 443 type TCPSSL 
+        certmd5 12-34-56-78-90-AB-CD-EF-12-34-56-78-90-AB-CD-EF
+	protocol HTTP request http://localhost/~hauk/monit/token  then restart
+   depends on apache_bin
+   depends on apache_rc
+
+check file apache_bin with path /opt/apache/bin/httpd
+   group www
+   if failed checksum then unmonitor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+
+check file apache_rc with path /etc/init.d/apache
+   group www
+   if failed checksum then unmonitor
+   if failed permission 755 then unmonitor
+   if failed uid root then unmonitor
+   if failed gid root then unmonitor
+

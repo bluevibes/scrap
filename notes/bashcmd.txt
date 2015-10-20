@@ -28,6 +28,7 @@ split : split an input files into multiple files. eg: split FILE -l 50 ---> spli
 lsof : list open files
 getent : get entries from Name Service Switch libraries
 host and dig : DNS lookup utility
+sudo chsh -s /bin/bash <username> : after adding new user if things look stupid
 
 TIPS
 ----
